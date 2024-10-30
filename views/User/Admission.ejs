@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <title>Document</title>
+    <%- include('../Links/HeaderFiles.ejs') %>
+    <style>
+        .error{
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+<div id="preloader"></div>
+
+<div id="wrapper">
+
+    <%- include('../Links/Header.ejs') %>
+
+    <div class="inner-page-banner-area" style="background-image: url('/img/about/1.jpg');">
+        <div class="container">
+            <div class="pagination-area">
+            </div>
+        </div>
+    </div>
+
+    <div class="container p-5"> <h3>Registration</h3></div>
+
+    <div class="container">
+        <div class="big-title text-center"></div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="defaultform contact_form alert">
+                    <div class="mb-35">
+                        <h5><span class="text-danger"><b>*</b></span> Indicates a required field.</h5>
+                    </div>
+                    <form id="studentAdmission">
+
+                        <div class="row">
+                            <div class="col-md-6 mb-12">
+                                <label  for="degName">Degree Type <span class="text-danger"><b>*</b></span></label>
+                                <select required name="degName" id="degName" class="form-control undefined" >
+                                    <option value="">Please Select Degree Type</option>
+                                    <option value="Under Graduation">Under Graduate</option>
+                                    <option value="Post Graduation">Post Graduate</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-12">
+                                <label for="name">Full Name <span class="text-danger"><b>*</b></span></label>
+                                <input required name="name" autocomplete="off" type="text" id="name" class="form-control undefined" >
+                            </div>
+                            <div class="col-md-4 mb-12">
+                                <label for="fathername">Father's Name <span class="text-danger"><b>*</b></span></label>
+                                <input required name="fathername" autocomplete="off" type="text" id="fathername" class="form-control undefined" >
+                            </div>
+                            <div class="col-md-4 mb-12">
+                                <label for="mothername">Mother's Name <span class="text-danger"><b>*</b></span></label>
+                                <input required name="mothername" id="mothername" class="form-control undefined" >
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-12">
+                                <label for="photo">Photo <span class="text-danger"><b>*</b></span></label>
+                                <input required name="photo" type="file" id="photo" class="form-control undefined">
+                            </div>
+                            <div class="col-md-6 mb-12">
+                                <label for="signature">Signature <span class="text-danger"><b>*</b></span></label>
+                                <input required name="signature" type="file" id="signature" class="form-control undefined">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12 mb-12">
+                                <label for="punjab_outside">Please Select Your Residential Status&nbsp;<span class="text-danger"><b>*</b></span></label>
+                                <select required name="punjab_outside" id="punjab_outside" class="form-control undefined" >
+                                    <option value="">Please Select</option>
+                                    <option value="Punjab Residence">Punjab Residence</option>
+                                    <option value="Outside Punjab">Outside Punjab</option>
+                                </select>
+                            </div>
+                        </div>
+
+                            <div id="container1" style="display: none" class="container-fluid" >
+                                <div class="row" style="padding: 15px 0px 6px; margin-bottom: 30px; border-radius: 4px; background-color: rgb(236, 240, 241);">
+                                    <div class="col-md-12" style="margin-bottom: 10px;">
+                                        <label >Please Select <span class="text-danger"><b>*</b></span></label>
+                                    </div>
+                                    <div class="col-md-12 mb-md-3 mb-sm-0">
+                                        <div class="row">
+                                            <div class="col-lg-2">
+                                                <input name="caste" id="SC (Low Income)" type="radio" class="mr-3" value="SC (Low Income)">
+                                                <label for="SC (Low Income)">SC (Low Income)</label>
+                                            </div>
+                                            <div class="col-lg-2">
+                                                <input name="caste" id="BC" type="radio" class="mr-3" value="BC">
+                                                <label for="BC">BC</label>
+                                            </div>
+                                            <div class="col-lg-2">
+                                                <input name="caste" id="Border Area" type="radio" class="mr-3" value="Border Area">
+                                                <label for="Border Area">Border Area</label>
+                                            </div>
+                                            <div class="col-lg-2">
+                                                <input name="caste" id="Back Area" type="radio" class="mr-3" value="Back Area">
+                                                <label for="Back Area">Back Area</label>
+                                            </div>
+                                            <div class="col-lg-2">
+                                                <input name="caste" id="Sports Person" type="radio" class="mr-3" value="Sports Person">
+                                                <label for="Sports Person">Sports Person</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12 mb-md-3 mb-sm-0">
+                                        <div class="row">
+                                            <div class="col-lg-4">
+                                                <input name="caste" id="Child/Grand Children of Freedom Fighter" type="radio" class="mr-3" value="Child/Grand Children of Freedom Fighter">
+                                                <label for="Child/Grand Children of Freedom Fighter">Child/Grand Children of Freedom Fighter</label>
+                                            </div>
+                                            <div class="col-lg-2">
+                                                <input name="caste" id="Defence / Ex-Serv." type="radio" class="mr-3" value="Defence / Ex-Serv.">
+                                                <label for="Defence / Ex-Serv.">Defence / Ex-Serv.</label>
+                                            </div>
+                                            <div class="col-lg-2">
+                                                <input name="caste" id="Paramilitary Persons" type="radio" class="mr-3" value="Paramilitary Persons">
+                                                <label for="Paramilitary Persons">Paramilitary Persons</label>
+                                            </div>
+                                            <div class="col-lg-2">
+                                                <input name="caste" id="Single Girl Child" type="radio" class="mr-3" value="Single Girl Child">
+                                                <label for="Single Girl Child">Single Girl Child</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12 mb-md-3 mb-sm-0">
+                                        <div class="row">
+                                            <div class="col-lg-3">
+                                                <input name="caste" id="Blind (Disabled Person)" type="radio" class="mr-3" value="Blind (Disabled Person)">
+                                                <label for="Blind (Disabled Person)">Blind (Disabled Person)</label>
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <input name="caste" id="Deaf & Dumb (Disabled Person)" type="radio" class="mr-3" value="Deaf & Dumb (Disabled Person)">
+                                                <label for="Deaf & Dumb (Disabled Person)">Deaf &amp; Dumb (Disabled Person)</label>
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <input name="caste" id="Other Disability (Disabled Person)" type="radio" class="mr-3" value="Other Disability (Disabled Person)">
+                                                <label for="Other Disability (Disabled Person)">Other Disability (Disabled Person)</label>
+                                            </div>
+                                            <div class="col-lg-2">
+                                                <input name="caste" id="Tsunami Victims" type="radio" class="mr-3" value="Tsunami Victims">
+                                                <label for="Tsunami Victims">Tsunami Victims</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12 mb-md-3 mb-sm-0">
+                                        <div class="row"><div class="col-lg-3">
+                                                <input name="caste" id="Victims of Terr. Viol. (1984 Riots)" type="radio" class="mr-3" value="Victims of Terr. Viol. (1984 Riots)">
+                                                <label for="Victims of Terr. Viol. (1984 Riots)">Victims of Terr. Viol. (1984 Riots)</label>
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <input name="caste" id="SC/ST" type="radio" class="mr-3" value="SC/ST">
+                                                <label for="SC/ST">SC/ST</label>
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <input name="caste" id="General" type="radio" class="mr-3" value="General">
+                                                <label for="General">General</label>
+                                            </div><div class="col-md-12"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="container2" style="display: none" class="container-fluid">
+                                <div class="row" style="padding: 15px 0px 6px; margin-bottom: 30px; border-radius: 4px; background-color: rgb(236, 240, 241);">
+                                    <div class="col-md-12" style="margin-bottom: 10px;">
+                                        <label>Please Select <span class="text-danger"><b>*</b></span></label>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type="radio" name="caste" id="SC_out" class="mr-3" value="SC" >
+                                        <label for="SC_out" class="mr-8">SC</label>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <input name="caste" id="BC_out" type="radio" class="mr-3" value="BC">
+                                        <label for="BC_out">BC</label>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <input name="caste" id="General_out" type="radio" class="mr-3" value="General">
+                                        <label for="General_out">General</label>
+                                    </div>
+
+                                    <div class="col-md-12">
+
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        <div class="row">
+                            <div class="col-md-12 mb-12">
+                                <label for="aadhaar">Aadhaar Number (Compulsory for SC (Low Income) category, optional for others)</label>
+                                <input name="aadhaar" autocomplete="off" type="text" id="aadhaar" class="form-control undefined">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-12">
+                                <label for="dob">Date of Birth (All as per Matric Certificate) <span class="text-danger"><b>*</b></span></label>
+                                <input required name="dob" type="date" id="dob" class="form-control undefined">
+                            </div>
+                            <div class="col-md-6 mb-12">
+                                <label>Gender <span class="text-danger"><b>*</b></span></label> <br>
+                                <input type="radio" name="gender" id="male" class="mr-3" value="Male" checked="">
+                                <label for="male" class="mr-8">Male</label>
+                                <input type="radio" name="gender" id="female" class="mr-3" value="Female">
+                                <label for="female" class="mr-8">Female</label>
+                                <input type="radio" name="gender" id="others" class="mr-3" value="Transgender/Others">
+                                <label for="others">Transgender/Others</label></div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-12">
+                                <label for="mobile">Mobile Number <span class="text-danger"><b>*</b></span></label>
+                                <input required name="mobile" autocomplete="off" type="tel" id="mobile" class="form-control undefined">
+                            </div>
+                            <div class="col-md-6 mb-12">
+                                <label for="email">Email <span class="text-danger"><b>*</b></span></label>
+                                <input required name="email" autocomplete="off" type="email" id="email" class="form-control undefined">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12 mb-12">
+                                <label for="address_permanent">Permanent Address <span class="text-danger"><b>*</b></span></label>
+                                <textarea required name="address_permanent" autocomplete="off" class="form-control " id="address_permanent" rows="6" ></textarea>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-12">
+                                <label for="district">District <span class="text-danger"><b>*</b></span></label>
+                                <input required type="text" autocomplete="off" name="district" id="district" class="form-control undefined" >
+                            </div>
+                            <div class="col-md-6 mb-12">
+                                <label for="state">State <span class="text-danger"><b>*</b></span></label>
+                                <input required type="text" autocomplete="off" name="state" id="state" class="form-control undefined" >
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-12">
+                                <label for="guardian_mobile">Father's/Guardian's Mobile Number (Optional)</label>
+                                <input name="guardian_mobile" autocomplete="off" type="tel" id="guardian_mobile" class="form-control" >
+                            </div>
+                            <div class="col-md-6 mb-12">
+                                <label for="guardian_email">Father's/Guardian's Email ID (Optional)</label>
+                                <input name="guardian_email" autocomplete="off" type="email" id="guardian_email" class="form-control" placeholder="" >
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12 mb-12">
+                                <label style="margin-right: 10px;">Do you wish to avail hostel</label>
+                                <input type="radio" name="hosteller" id="hostellerYes" class="me-1" value="hosteller">
+                                <label for="hostellerYes" style="margin-left: 2px; margin-right: 6px;">Yes</label>
+                                <input type="radio" name="hosteller" id="hostellerNo" class="me-1" value="day scholar" checked="">
+                                <label for="hostellerNo" style="margin-left: 2px;">No</label>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mt-20">
+                                <button type="button" value="SEND" id="submit" class="btn btn-primary" onclick="Submit()"  style="width: 100%;">Submit</button>
+                            </div>
+                            <div class="col-md-6 mt-20">
+                                <button type="reset" value="SEND" id="reset" class="btn btn-primary"  style="width: 100%;">Reset</button>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../Links/Footer.ejs') %>
+
+    <script>
+        async function getCourses(degName){
+            //console.log(degName)
+            let url = "/getcourses"
+            let response = await fetch(url,{
+                method:'POST',
+                headers:{'Content-Type':'application/json'},
+                body:JSON.stringify({degName:degName})
+            })
+            response= await response.json();
+           // console.log(response.records)
+
+            const courseSelect = document.getElementById('course');
+            courseSelect.innerHTML = '';
+            if(response.error !== ""){
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: (response.error),
+                });
+            }
+            else {
+                let html = `  <option value="">Please Select Course</option>`
+
+                for (let x of response.records) {
+
+                  html += ` <option value="${x.id}">${x.course_name}</option>`
+
+                }
+                document.getElementById('course').innerHTML = html ;
+            }
+        }
+
+    </script>
+
+    <script>
+        // Get the select element and the containers
+        const punjabOutsideSelect = document.getElementById('punjab_outside');
+        const container1 = document.getElementById('container1');
+        const container2 = document.getElementById('container2');
+
+        // Add an event listener to the select element
+        punjabOutsideSelect.addEventListener('change', function() {
+            const selectedValue = punjabOutsideSelect.value;
+
+            if (selectedValue === 'Punjab Residence') {
+                container1.style.display = 'block';
+                container2.style.display = 'none';
+            } else if (selectedValue === 'Outside Punjab') {
+                container1.style.display = 'none';
+                container2.style.display = 'block';
+            }
+        });
+    </script>
+
+    <script>
+        async function Submit() {
+
+            const form = document.getElementById('studentAdmission')
+
+            if($('#studentAdmission').valid()) {
+                const formData = new FormData(form);
+                const url = "/submit";
+                let response = await fetch(url, {
+                    method: 'POST',
+                    body: formData
+                });
+                response = await response.json();
+               // console.log(response);
+                if (response.error !== "") {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: (response.error),
+                    });
+                } else {
+
+                    Swal.fire({
+                        title: "Good job!",
+                        text: (response.message),
+                        icon: "success"
+                    }).then(()=>{
+                        window.location.href='/login-user'
+                    })
+                }
+            }
+            }
+
+    </script>
+</div>
+
+<%- include('../Links/Scripts.ejs') %>
+
+</body>
+</html>

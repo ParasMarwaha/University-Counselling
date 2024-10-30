@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    <title>Document</title>
+    <%- include('../Links/HeaderFiles.ejs') %>
+    <style>
+        .error {
+            color: red;
+        }
+
+        .popup {
+            position: relative;
+            width: 320px;
+            height: fit-content;
+            background: #FFFFFF;
+            box-shadow: 0px 187px 75px rgba(0, 0, 0, 0.01), 0px 105px 63px rgba(0, 0, 0, 0.05), 0px 47px 47px rgba(0, 0, 0, 0.09), 0px 12px 26px rgba(0, 0, 0, 0.1), 0px 0px 0px rgba(0, 0, 0, 0.1);
+            border-radius: 13px;
+        }
+
+        .form {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        .note {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .title {
+            font-style: normal;
+            font-weight: 700;
+            font-size: 17px;
+            line-height: 24px;
+            color: #2B2B2F;
+        }
+
+        .subtitle {
+            font-style: normal;
+            font-weight: 600;
+            font-size: 13px;
+            line-height: 18px;
+            color: #5F5D6B;
+        }
+
+        .form button.button {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            padding: 10px 18px;
+            gap: 10px;
+            width: 100%;
+            height: 42px;
+            background: linear-gradient(180deg, #4480FF 0%, #115DFC 50%, #0550ED 100%);
+            box-shadow: 0px 0.5px 0.5px #EFEFEF, 0px 1px 0.5px rgba(239, 239, 239, 0.5);
+            border-radius: 5px;
+            border: 0;
+            font-style: normal;
+            font-weight: 600;
+            font-size: 12px;
+            line-height: 15px;
+            color: #ffffff;
+        }
+    </style>
+
+    <style>
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px; /* Adjust the gap between the columns as needed */
+        }
+
+        .form-row .col {
+            flex: 1;
+            min-width: 200px; /* Adjust the minimum width as needed */
+        }
+
+    </style>
+
+    <style>
+        .styled-button {
+            display: flex;
+            align-items: center;
+            font-family: inherit;
+            font-weight: 500;
+            font-size: 17px;
+            padding: 0.8em 1.5em 0.8em 1.2em;
+            color: white;
+            background: #ad5389;
+            background: linear-gradient(0deg, rgba(77,54,208,1) 0%, rgba(132,116,254,1) 100%);
+            border: none;
+            box-shadow: 0 0.7em 1.5em -0.5em #4d36d0be;
+            letter-spacing: 0.05em;
+            border-radius: 20em;
+        }
+
+        .styled-button svg {
+            margin-right: 8px;
+        }
+
+        .styled-button:hover {
+            box-shadow: 0 0.5em 1.5em -0.5em #4d36d0be;
+        }
+
+        .styled-button:active {
+            box-shadow: 0 0.3em 1em -0.5em #4d36d0be;
+        }
+
+        .error {
+            color: red;
+        }
+    </style>
+
+</head>
+<body onload="Check()">
+
+<div id="preloader"></div>
+
+<div>
+    <%- include('../Links/UserHeader.ejs') %>
+    <div class="inner-page-banner-area" style="background-image: url('img/banner/5.jpg');">
+        <div class="container">
+            <div class="pagination-area">
+                <h1>Profile</h1>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                    <div class="profile-details tab-content">
+                        <div class="tab-pane tab-item animated fadeIn show active" id="menu-1" role="tabpanel" aria-labelledby="menu-1-tab">
+                            <h3 class="title-section title-bar-high mb-40">Personal Information</h3>
+                            <form id="formUpdate">
+                                <div class="form-row mb-3">
+                                    <div class="col">
+                                        <label for="name">Full Name </label>
+                                        <input required name="name" autocomplete="off" type="text" id="name"
+                                               class="form-control undefined">
+                                    </div>
+                                    <div class="col">
+                                        <label for="fathername">Father's Name </label>
+                                        <input required name="fathername" autocomplete="off" type="text" id="fathername"
+                                               class="form-control undefined">
+                                    </div>
+                                </div>
+
+                                <div class="form-row mb-3">
+                                    <div class="col">
+                                        <label for="email">Email </label>
+                                        <input required name="email" autocomplete="off" type="email" id="email"
+                                               class="form-control undefined">
+                                    </div>
+                                    <div class="col">
+                                        <label for="mothername">Mother's Name </label>
+                                        <input required name="mothername" id="mothername" class="form-control undefined">
+                                    </div>
+                                </div>
+
+                                <div class="form-row mb-3">
+                                    <div class="col">
+                                        <label for="dob">Date of Birth (All as per Matric Certificate)</label>
+                                        <input required name="dob" type="date" id="dob" class="form-control undefined">
+                                    </div>
+                                    <div class="col">
+                                        <label for="mobile">Mobile Number</label>
+                                        <input required name="mobile" autocomplete="off" type="tel" id="mobile"
+                                               class="form-control undefined">
+                                    </div>
+                                </div>
+
+                                <div class="form-row mb-3">
+                                    <div class="col">
+                                        <label for="aadhaar">Aadhaar Number</label>
+                                        <input required name="aadhaar" autocomplete="off" type="text" id="aadhaar"
+                                               class="form-control undefined">
+                                    </div>
+                                    <div class="col">
+                                        <label>Gender</label> <br>
+                                        <input type="radio" name="gender" id="male" class="mr-3" value="Male">
+                                        <label for="male" class="mr-8">Male</label>
+                                        <input type="radio" name="gender" id="female" class="mr-3" value="Female">
+                                        <label for="female" class="mr-8">Female</label>
+                                        <input type="radio" name="gender" id="others" class="mr-3" value="Transgender/Others">
+                                        <label for="others">Transgender/Others</label>
+                                    </div>
+                                </div>
+
+                                <div class="form-row mb-3">
+                                    <div class="col">
+                                        <label for="guardian_email">Father's/Guardian's Email ID </label>
+                                        <input  name="guardian_email" autocomplete="off" type="email" id="guardian_email"
+                                               class="form-control" placeholder="">
+                                    </div>
+                                    <div class="col">
+                                        <label for="guardian_mobile">Father's/Guardian's Mobile Number </label>
+                                        <input  name="guardian_mobile" autocomplete="off" type="tel" id="guardian_mobile"
+                                               class="form-control">
+                                    </div>
+                                </div>
+
+                                <div class="form-row mb-3">
+                                    <div class="col">
+                                        <label for="district">District</label>
+                                        <input required name="district" autocomplete="off" type="text" id="district"
+                                               class="form-control" placeholder="">
+                                    </div>
+                                    <div class="col">
+                                        <label for="state">State</label>
+                                        <input required name="state" autocomplete="off" type="text" id="state"
+                                               class="form-control">
+                                    </div>
+                                </div>
+
+                                <div class="form-row mb-3">
+                                    <div class="col">
+                                        <label for="address_permanent">Permanent Address <span class="text-danger"><b>*</b></span></label>
+                                        <textarea required name="address_permanent" autocomplete="off" class="form-control " id="address_permanent" rows="6" ></textarea>
+                                    </div>
+                                </div>
+                                <button type="button" onclick="Update()" class="styled-button">Update Profile</button>
+                            </form>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+    <%- include('../Links/Footer.ejs') %>
+</div>
+
+<%- include('../Links/Scripts.ejs') %>
+
+<script>
+    async function Check(){
+        let url = "/read-profile"
+        let response = await fetch(url)
+        response = await response.json()
+        // console.log(response.error)
+        if (response.error !== "") {
+            // console.log(response.error)
+            alert(response.error);
+        }
+        else {
+           // console.log(response.records)
+            let productData = response.records[0]
+            document.getElementById('name').value = productData.full_name
+            document.getElementById('fathername').value = productData.father_name
+            document.getElementById('email').value = productData.email
+            document.getElementById('mothername').value = productData.mother_name
+            document.getElementById('dob').value = productData.dob
+            document.getElementById('mobile').value = productData.phone
+            document.getElementById('aadhaar').value = productData.aadhaar
+            document.getElementById('guardian_email').value = productData.gardian_email
+            document.getElementById('guardian_mobile').value = productData.gardian_no
+            document.getElementById('district').value = productData.district
+            document.getElementById('state').value = productData.state
+            document.getElementById('address_permanent').value = productData.address
+            if (productData.gender === "Male") {
+                document.getElementById('male').checked = true;
+            } else if (productData.gender === "Female") {
+                document.getElementById('female').checked = true;
+            } else {
+                document.getElementById('others').checked = true;
+            }
+        }
+    }
+
+    async function Update() {
+
+        let form = document.getElementById('formUpdate')
+        let formData = new FormData(form)
+        //console.log(formData)
+
+
+        if($('#formUpdate').valid()) {
+            const url = "/update-profile";
+            let response = await fetch(url, {
+                method: 'POST',
+                body: formData
+            });
+            response = await response.json();
+            // console.log(response);
+            if (response.error !== "") {
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: (response.error),
+                });
+            } else {
+                Swal.fire({
+                    title: "Good job!",
+                    text: (response.message),
+                    icon: "success"
+                }).then(()=>{
+                    Check()
+                })
+            }
+        }
+    }
+
+</script>
+</body>
+</html>

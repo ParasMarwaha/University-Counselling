@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <title>Document</title>
+    <%- include('../Links/HeaderFiles.ejs') %>
+    <style>
+        .error{
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+<div id="preloader"></div>
+
+<div id="wrapper">
+
+    <%- include('../Links/Admin2.ejs') %>
+
+    <div id="adduser" class="modal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Admin</h5>
+                    <button type="button" onclick="CloseModal()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="form" >
+                        <div class="mb-3">
+                            <label class="form-label" for="name">Name</label>
+                            <input required name="name" type="text" class="form-control" id="name" placeholder="Enter Name" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="email">Email</label>
+                            <input required name="email" type="email" class="form-control" id="email" placeholder="Enter Email" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="role">Role</label>
+                            <select name="type" required class="form-select" id="type" >
+                                <option value="">Select a role</option>
+                                <option value="staff">Staff</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="CloseModal()" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" onclick="Add()" class="btn btn-primary">Add</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="inner-page-banner-area" style="background-image: url('/img/about/1.jpg');">
+        <div class="container">
+            <div class="pagination-area">
+            </div>
+        </div>
+    </div>
+
+
+    <%- include('../Links/Footer.ejs') %>
+
+
+</div>
+
+<script>
+
+    function OpenModal(){
+        $('#adduser').modal('show');
+
+        // Add a CSS class to the body element to dim the background
+        document.body.classList.add('modal-open');
+    }
+
+    function CloseModal() {
+        $('#adduser').modal('hide');
+
+        // Remove the CSS class from the body element to restore the background
+        document.getElementById('modalOverlay').style.display = 'none';
+    }
+
+    async function Add(){
+        let name = document.getElementById('name').value
+        let email = document.getElementById('email').value
+        let type = document.getElementById('type').value
+
+        if($('#form').valid()) {
+            let url = "/add-admin"
+            let response = await fetch(url, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({name: name, email: email, type: type})
+            })
+            response = await response.json();
+            console.log(response)
+
+
+            if (response.error !== "") {
+                alert("Oh No")
+            } else {
+                //console.log("success")
+                Swal.fire({
+                    title: "Good job!",
+                    text: (response.message),
+                    icon: "success"
+                })
+                    .then(() => {
+                        CloseModal()
+                        //     window.location.href = "/admin-otp/" + email
+                    })
+            }
+        }
+    }
+
+</script>
+
+
+
+
+
+<%- include('../Links/Scripts.ejs') %>
+
+</body>
+</html>

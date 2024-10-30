@@ -1,0 +1,584 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="//cdn.datatables.net/2.0.8/css/dataTables.dataTables.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <%- include('../Links/HeaderFiles.ejs') %>
+    <style>
+        .error{
+            color: red !important;
+        }
+        button {
+            border: none;
+            color: #fff;
+            background-image: linear-gradient(30deg, #0400ff, #4ce3f7);
+            border-radius: 20px;
+            background-size: 100% auto;
+            font-family: inherit;
+            font-size: 17px;
+            padding: 0.6em 1.5em;
+        }
+
+        button:hover {
+            background-position: right center;
+            background-size: 200% auto;
+            -webkit-animation: pulse 2s infinite;
+            animation: pulse512 1.5s infinite;
+        }
+
+        @keyframes pulse512 {
+            0% {
+                box-shadow: 0 0 0 0 #05bada66;
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgb(218 103 68 / 0%);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgb(218 103 68 / 0%);
+            }
+        }
+    </style>
+
+</head>
+<body onload="ReadCourse()">
+
+<%- include('../Links/Admin2.ejs') %>
+<div id="preloader"></div>
+
+
+<div id="adduser" class="modal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Course</h5>
+                <button type="button" onclick="CloseModal()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="form" >
+                    <div class="mb-3">
+                        <label class="form-label" for="name">Course Name</label>
+                        <input required name="name" type="text" class="form-control" id="name" placeholder="Enter Course Name" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="pcm">PCM Required : </label> <br>
+                        <input type="radio" name="pcm" id="yes" class="mr-3" value="YES" checked="">
+                        <label for="yes" class="mr-8">Yes</label>
+                        <input type="radio" name="pcm" id="no" class="mr-3" value="NO">
+                        <label for="no" class="mr-8">No</label>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="courseFee">Course Fee</label>
+                        <input required name="courseFee" type="number" class="form-control" id="courseFee" placeholder="Enter Course Fee" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="number">Counselling Fee</label>
+                        <input required name="number" type="number" class="form-control" id="number" placeholder="Enter Counselling Fee" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="type">Role</label>
+                        <select name="type" required class="form-select" id="type" >
+                            <option value="">Select degree</option>
+                            <option value="Post Graduation">Post Graduation</option>
+                            <option value="Under Graduation">Under Graduation</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" onclick="CloseModal()" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" onclick="Add()" class="btn btn-primary">Add</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="editcourse" class="modal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Update Course</h5>
+            </div>
+            <div class="modal-body">
+                <form id="form1" >
+                    <input type="hidden" id="id">
+                    <div class="mb-3">
+                        <label class="form-label" for="name">Course Name</label>
+                        <input required name="name" type="text" class="form-control" id="nameEdit" placeholder="Enter Course Name" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="email">Course Fee</label>
+                        <input required name="courseFee" type="number" class="form-control" id="courseFeeedit" placeholder="Enter Course Fee" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="degree">Counselling Fee</label>
+                        <input required name="number" type="number" class="form-control" id="numberedit" placeholder="Enter Counselling Fee" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="role">Role</label>
+                        <select name="type" required class="form-select" id="typeedit" >
+                            <option value="">Select degree</option>
+                            <option value="Post Graduation">Post Graduation</option>
+                            <option value="Under Graduation">Under Graduation</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" onclick="CloseEditModal()" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" onclick="Update()" class="btn btn-primary">Update</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="addseat" class="modal " tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Seats</h5>
+            </div>
+            <div class="modal-body">
+                <form id="form2" >
+                    <input type="hidden" id="course_id">
+                    <div class="mb-3">
+                        <label class="form-label" for="role">Quota</label>
+                        <select name="quota" required class="form-select" id="quota" >
+                            <option value="">Select Quota</option>
+                            <option value="General">General</option>
+                            <option value="SC">SC</option>
+                            <option value="OBC">OBC</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="name">No. of Seats</label>
+                        <input required name="Seats" type="number" class="form-control" id="SeatCount" placeholder="Enter No. of seats.." />
+                    </div>
+                    <button type="button" onclick="CloseSeatModal()" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" onclick="AddSeat()" class="btn btn-primary">Add</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <table  class="table table-dark">
+                    <thead>
+                    <tr>
+                        <th class="text-center">Sr No.</th>
+                        <th class="text-center">Quota</th>
+                        <th class="text-center">Total Seats</th>
+                        <th class="text-center">Edit</th>
+                    </tr>
+                    </thead>
+                    <tbody id="seats"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="editseat" class="modal " tabindex="-1">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Update Seats</h5>
+            </div>
+            <div class="modal-body">
+                <form id="form3" >
+                    <input type="hidden" id="seat_id">
+                    <div class="mb-3">
+                        <label class="form-label" for="quotaEdit">Quota</label>
+                        <select  disabled name="quota" required class="form-select" id="quotaEdit" >
+                            <option value="">Select Quota</option>
+                            <option value="General">General</option>
+                            <option value="SC">SC</option>
+                            <option value="OBC">OBC</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="name">No. of Seats</label>
+                        <input required name="Seats" type="number" class="form-control" id="SeatCountEdit" placeholder="Enter No. of seats.." />
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" onclick="CloseEditSeatModal()" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" onclick="UpdateSeat()" class="btn btn-primary">Update</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container">
+    <button type="button" onclick="OpenModal()">Add Courses</button>
+
+
+    <div id="wrapper">
+
+        <table id="myTable" class="table table-bordered table-dark table-hover">
+            <thead>
+            <tr>
+                <th class="text-center">Sr No.</th>
+                <th class="text-center">Course Name</th>
+                <th class="text-center">PCM</th>
+                <th class="text-center">Course Fee</th>
+                <th class="text-center">Counselling Fee</th>
+                <th class="text-center">Degree</th>
+                <th class="text-center">Seat</th>
+                <th class="text-center">Edit</th>
+                <th class="text-center">Delete</th>
+            </tr>
+            </thead>
+
+            <tbody id="user"></tbody>
+        </table>
+
+
+    </div>
+</div>
+
+
+<%- include('../Links/Footer.ejs') %>
+<%- include('../Links/Scripts.ejs') %>
+
+
+<script>
+
+    const tableRows = document.querySelectorAll('tr');
+
+    let product ;
+
+    async function ReadCourse() {
+        // get user from server
+        let url = "/read-course"
+        let response = await fetch(url)
+        response = await response.json()
+        // console.log(response.error)
+        if (response.error !== "") {
+            // console.log(response.error)
+            alert(response.error);
+        } else {
+            product = response.records
+            // console.log(response.records)
+            let html = ``;
+            for (let i = 0; i < response.records.length; i++) {
+                let record = response.records[i];
+                //console.log(record)
+                html += `<tr >
+<td class="text-center">${i + 1}</td>
+                         <td class="text-center text-lg-center">${record.course_name}</td>
+                         <td class="text-center text-lg-center">${record.pcm}</td>
+                         <td class="text-center">${record.course_fee}</td>
+                         <td class="text-center">${record.counselling_fee}</td>
+                         <td class="text-center">${record.degree}</td>
+                         <td class="text-center"><button style="background: peru" type="button" class="btn btn-sm btn-primary" onclick="OpenSeatModal(${record.id})">Seats</button></td>
+                         <td class="text-center"><button type="button" class="btn btn-sm btn-primary" onclick="OpenEditModal(${record.id})">Edit</button></td>
+                         <td class="text-center"><button style="background: red" type="button" class="btn btn-sm btn-danger" onclick="Delete(${record.id})">Delete</button></td>
+                         </tr>`
+            }
+            document.getElementById('user').innerHTML = html;
+
+            let table = new DataTable('#myTable');
+        }
+
+    }
+
+    async function ReadSeat(id) {
+        // get user from server
+        let url = "/read-seat/" + id
+        let response = await fetch(url)
+        response = await response.json()
+        // console.log(response.error)
+        if (response.error !== "") {
+            // console.log(response.error)
+            alert(response.error);
+        } else {
+            product = response.records
+            // console.log(response.records)
+            let html = ``;
+            for (let i = 0; i < response.records.length; i++) {
+                let record = response.records[i];
+                //console.log(record)
+                html += `<tr >
+                         <td class="text-center">${i + 1}</td>
+                         <td class="text-center text-lg-center">${record.quota}</td>
+                         <td class="text-center">${record.Seat_count}</td>
+                         <td class="text-center"><button type="button" class="btn btn-sm btn-primary" onclick="OpenEditSeatModal(${record.id})">Edit</button></td>
+                         </tr>`
+            }
+            document.getElementById('seats').innerHTML = html;
+        }
+
+    }
+
+
+</script>
+<script>
+
+    function OpenModal(){
+        $('#adduser').modal('show');
+
+        // Add a CSS class to the body element to dim the background
+    }
+
+    function CloseModal() {
+        $('#adduser').modal('hide');
+
+        // Remove the CSS class from the body element to restore the background
+        ReadCourse()
+    }
+
+    function OpenEditModal(id){
+
+            //console.log(product)
+           // console.log(id)
+            let dataFilter = product.filter((x) => x.id === id)
+           // console.log(dataFilter)
+           // console.log(dataFilter[0].course_name)
+           // console.log(dataFilter[0].course_fee)
+           // console.log(dataFilter[0].counselling_fee)
+            //console.log(dataFilter[0].contact)
+            document.getElementById('id').value = dataFilter[0].id
+            document.getElementById('nameEdit').value = dataFilter[0].course_name
+            document.getElementById('courseFeeedit').value = dataFilter[0].course_fee
+            document.getElementById('numberedit').value = dataFilter[0].counselling_fee
+            document.getElementById('typeedit').value = dataFilter[0].degree
+
+            $('#editcourse').modal('show');
+
+            // Add a CSS class to the body element to dim the background
+        }
+
+    function CloseEditModal() {
+        $('#editcourse').modal('hide');
+
+        // Remove the CSS class from the body element to restore the background
+        ReadCourse()
+    }
+
+    function OpenSeatModal(id){
+
+        let dataFilter = product.filter((x) => x.id === id)
+        // console.log(dataFilter)
+        document.getElementById('course_id').value = dataFilter[0].id
+
+        ReadSeat(id)
+
+        $('#addseat').modal('show');
+
+        // Add a CSS class to the body element to dim the background
+    }
+
+    function CloseSeatModal() {
+        $('#addseat').modal('hide');
+
+        // Remove the CSS class from the body element to restore the background
+        ReadCourse()
+    }
+
+    async function Add(){
+    let data = document.getElementById('form')
+        let formData = new FormData(data)
+
+        if($('#form').valid()) {
+            let url = "/add-admin-course"
+            let response = await fetch(url, {
+                method: 'POST',
+                body: formData
+            })
+            response = await response.json();
+           // console.log(response)
+
+
+            if (response.error !== "") {
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: (response.error),
+                });
+            } else {
+                ReadCourse()
+                //console.log("success")
+                Swal.fire({
+                    title: "Good job!",
+                    text: (response.message),
+                    icon: "success"
+                })
+                    .then(() => {
+                        ReadCourse()
+                        CloseModal()
+                        //     window.location.href = "/admin-otp/" + email
+                    })
+            }
+        }
+    }
+
+    async function AddSeat(){
+        let course_id = document.getElementById('course_id').value
+        let quota = document.getElementById('quota').value
+        let seats = document.getElementById('SeatCount').value
+
+        if($('#form2').valid()) {
+            let url = "/add-admin-seats"
+            let response = await fetch(url, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({course_id:course_id,quota:quota,seats:seats})
+            })
+            response = await response.json();
+           // console.log(response)
+
+
+            if (response.error !== "") {
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: (response.error),
+                });
+            }
+            else {
+                Swal.fire({
+                    title: "Good job!",
+                    text: (response.message),
+                    icon: "success"
+                }).then(() => {
+                        CloseSeatModal()
+                    })
+            }
+        }
+    }
+
+    async function Update() {
+        let id = document.getElementById('id').value
+        let name = document.getElementById('nameEdit').value
+        let courseFee = document.getElementById('courseFeeedit').value
+        let fee = document.getElementById('numberedit').value
+        let degree = document.getElementById('typeedit').value
+
+        if($("#form1").valid()) {
+            let url = "/update-course"
+            let response = await fetch(url, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({id: id, name: name, courseFee: courseFee,fee:fee,degree:degree})
+            })
+            response = await response.json();
+            //console.log(response)
+            if (response.error !=="") {
+                alert(response.error)
+            } else {
+                Swal.fire({
+                    title: "Good job!",
+                    text: (response.message),
+                    icon: "success"
+                })
+                ReadCourse()
+
+                CloseEditModal()
+
+            }
+        }
+    }
+
+    async function Delete(id){
+        if (confirm('Are You Sure ?')) {
+            let url = "/delete-course/" + id
+            let response = await fetch(url)
+            response = await response.json()
+            // console.log(response)
+
+            if (response.error !== '') {
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: (response.error),
+                })
+            } else {
+                ReadCourse()
+                Swal.fire({
+                    title: "Good job!",
+                    text: (response.message),
+                    icon: "success"
+                })
+            }
+        }
+    }
+
+    function OpenEditSeatModal(id){
+
+       CloseSeatModal()
+        let dataFilter = product.filter((x) => x.id === id)
+        // console.log(dataFilter)
+        // console.log(dataFilter[0].course_name)
+        // console.log(dataFilter[0].course_fee)
+        // console.log(dataFilter[0].counselling_fee)
+        //console.log(dataFilter[0].contact)
+        document.getElementById('seat_id').value = dataFilter[0].id
+        document.getElementById('quotaEdit').value = dataFilter[0].quota
+        document.getElementById('SeatCountEdit').value = dataFilter[0].Seat_count
+
+
+        $('#editseat').modal('show');
+
+        // Add a CSS class to the body element to dim the background
+    }
+
+    function CloseEditSeatModal() {
+        $('#editseat').modal('hide');
+
+        // Remove the CSS class from the body element to restore the background
+        ReadCourse()
+    }
+
+async function UpdateSeat(){
+        let seat_id = document.getElementById('seat_id').value
+        let quota = document.getElementById('quotaEdit').value
+        let seat = document.getElementById('SeatCountEdit').value
+
+       // console.log(seat_id)
+        //console.log(quota)
+        //console.log(seat)
+        if($("#form3").valid()) {
+            let url = "/update-seat"
+            let response = await fetch(url, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({id: seat_id,quota:quota,seat:seat})
+            })
+            response = await response.json();
+            //console.log(response)
+            if (response.error !=="") {
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: (response.error),
+                });
+            } else {
+                Swal.fire({
+                    title: "Good job!",
+                    text: (response.message),
+                    icon: "success"
+                })
+                ReadCourse()
+
+                CloseEditSeatModal()
+
+            }
+        }
+
+    }
+
+
+</script>
+
+</body>
+</html>

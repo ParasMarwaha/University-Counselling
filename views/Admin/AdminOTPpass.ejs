@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        .error{
+            color: whitesmoke;
+        }
+    </style>
+    <%- include('../Links/HeaderFiles.ejs') %>
+</head>
+<body>
+
+<div id="preloader"></div>
+
+
+<div id="wrapper">
+
+    <%- include('../Links/Admin2.ejs') %>
+
+    <div class="inner-page-banner-area" style="background-image: url('/img/about/1.jpg');">
+        <div class="container">
+            <div class="pagination-area">
+
+                <h1></h1>
+            </div>
+        </div>
+    </div>
+
+    <div class="service2-area">
+        <div class="search-area">
+            <div class="container">
+                <div class="row search-inner">
+                    <div class="col-xl-2 col-lg-3 col-md-3 col-sm-12">
+                        <div class="search-title">
+                            <span>Reset</span> <br>
+                            <span>Password</span>
+                        </div>
+                    </div>
+                    <div class="col-xl-8 col-lg-6 col-md-6 col-sm-12">
+                        <div class="search-input">
+                            <form id="form">
+                                <input class="p-2" required name="newpass" id="newpass" type="password" placeholder="Enter New Password"/>
+
+                                <br>
+                                <input required name="confirm" id="confirm" type="password" placeholder="Confirm Password"/>
+
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-xl-2 col-lg-3 col-md-3 col-sm-12">
+                        <div class="search-submit">
+                            <button class="btn btn-primary" onclick="onSubmit()">Reset</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../Links/Footer.ejs') %>
+
+</div>
+<%- include('../Links/Scripts.ejs') %>
+<script>
+    async function onSubmit(){
+
+        let newpass = document.getElementById('newpass').value
+        let confirm = document.getElementById('confirm').value
+
+        if($("#form").valid()) {
+            let url = `/change-adminotp-password/<%= email.email %> `
+            let response = await fetch(url, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({newpass: newpass, confirm: confirm})
+            })
+            //console.log({name:name,email:email,password:password})
+            response = await response.json();
+            //console.log(response)
+            if (response.error != "") {
+                Qual.errord("Oh No", response.error)
+            } else {
+                //console.log("success")
+                document.getElementById('form').reset()
+
+                Swal.fire({
+                    title: "Good job!",
+                    text: "You clicked the button!",
+                    icon: "success"
+                }).then(() => {
+                    window.location.href = "/admin"
+                })
+            }
+
+        }
+    }
+
+</script>
+</body>
+</html>

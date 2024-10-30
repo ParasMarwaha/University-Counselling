@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="//cdn.datatables.net/2.0.8/css/dataTables.dataTables.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <%- include('../Links/HeaderFiles.ejs') %>
+    <style>
+        .error{
+            color: red;
+        }
+        button {
+            border: none;
+            color: #fff;
+            background-image: linear-gradient(30deg, #0400ff, #4ce3f7);
+            border-radius: 20px;
+            background-size: 100% auto;
+            font-family: inherit;
+            font-size: 17px;
+            padding: 0.6em 1.5em;
+        }
+
+        button:hover {
+            background-position: right center;
+            background-size: 200% auto;
+            -webkit-animation: pulse 2s infinite;
+            animation: pulse512 1.5s infinite;
+        }
+
+        @keyframes pulse512 {
+            0% {
+                box-shadow: 0 0 0 0 #05bada66;
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgb(218 103 68 / 0%);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgb(218 103 68 / 0%);
+            }
+        }
+    </style>
+
+</head>
+<body onload="ReadUser()">
+
+<%- include('../Links/Admin2.ejs') %>
+<div id="preloader"></div>
+
+<div class="container">
+    <button onclick="OpenModal()" type="button" >Add User</button>
+    <br> <br>
+
+    <div id="adduser" class="modal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Admin</h5>
+                </div>
+                <div class="modal-body">
+                    <form id="form" >
+                        <div class="mb-3">
+                            <label class="form-label" for="name">Name</label>
+                            <input required name="name" type="text" class="form-control" id="name" placeholder="Enter Name" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="email">Email</label>
+                            <input required name="email" type="email" class="form-control" id="email" placeholder="Enter Email" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="role">Role</label>
+                            <select name="type" required class="form-select" id="type" >
+                                <option value="">Select a role</option>
+                                <option value="staff">Staff</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="CloseModal()" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" onclick="Add()" class="btn btn-primary">Add</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="wrapper">
+
+        <table id="myTable" class="table table-bordered table-dark table-hover">
+            <thead>
+            <tr>
+                <th class="text-center">Sr No.</th>
+                <th class="text-center">Name</th>
+                <th class="text-center">Email</th>
+                <th class="text-center">Status</th>
+                <th class="text-center">Role</th>
+                <th class="text-center">Access</th>
+            </tr>
+            </thead>
+
+            <tbody id="user"></tbody>
+        </table>
+
+    </div>
+</div>
+
+
+<%- include('../Links/Footer.ejs') %>
+<%- include('../Links/Scripts.ejs') %>
+
+
+<script>
+
+    const tableRows = document.querySelectorAll('tr');
+
+    async function ReadUser() {
+        // get user from server
+        let url = "/read-user"
+        let response = await fetch(url)
+        response = await response.json()
+        // console.log(response.error)
+        if (response.error !== "") {
+            // console.log(response.error)
+            alert(response.error);
+        } else {
+            // console.log(response.records)
+            let html = ``;
+            for (let i = 0; i < response.records.length; i++) {
+                let record = response.records[i];
+                //console.log(record)
+                html += `<tr >
+                         <td class="text-center">${i + 1}</td>
+                         <td class="text-center text-lg-center">${record.name}</td>
+                         <td class="text-center">${record.email}</td>
+                         <td class="text-center">${record.status}</td>
+                         <td class="text-center">${record.type}</td>`
+
+                    if(record.status === "Active" ){
+                       html +=  `<td class="text-center"><button onclick="SetInactive(${record.id})" type="button" style="background: blueviolet" class="btn btn-danger btn-sm">Inactive</button></td>
+                         </tr>`
+                    }else{
+                        html +=  `<td class="text-center"><button onclick="SetActive(${record.id})" type="button" style="background: green" class="btn btn-success btn-sm">Active</button></td>
+                         </tr>`
+                    }
+
+
+            }
+            document.getElementById('user').innerHTML = html;
+
+             let table = new DataTable('#myTable');
+        }
+
+    }
+
+</script>
+<script>
+
+    function OpenModal(){
+        $('#adduser').modal('show');
+
+        // Add a CSS class to the body element to dim the background
+        document.body.classList.add('modal-open');
+    }
+
+    function CloseModal() {
+        $('#adduser').modal('hide');
+
+        // Remove the CSS class from the body element to restore the background
+        document.getElementById('modalOverlay').style.display = 'none';
+        ReadUser()
+    }
+
+    async function Add(){
+        let name = document.getElementById('name').value
+        let email = document.getElementById('email').value
+        let type = document.getElementById('type').value
+
+        if($('#form').valid()) {
+            let url = "/add-admin"
+            let response = await fetch(url, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({name: name, email: email, type: type})
+            })
+            response = await response.json();
+            console.log(response)
+
+
+            if (response.error !== "") {
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: (response.error),
+                });
+            } else {
+                ReadUser()
+                //console.log("success")
+                Swal.fire({
+                    title: "Good job!",
+                    text: (response.message),
+                    icon: "success"
+                })
+                    .then(() => {
+                        ReadUser()
+                        CloseModal()
+                        //     window.location.href = "/admin-otp/" + email
+                    })
+            }
+        }
+    }
+
+    async function SetInactive(id){
+
+        let url = "/inactive/" + id ;
+        let response = await fetch(url)
+        response = await response.json()
+        ReadUser()
+        console.log(response)
+
+    }
+
+    async function SetActive(id){
+
+        let url = "/active/" + id ;
+        let response = await fetch(url)
+        response = await response.json()
+        ReadUser()
+        console.log(response)
+    }
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,997 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="//cdn.datatables.net/2.0.8/css/dataTables.dataTables.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <%- include('../Links/HeaderFiles.ejs') %>
+    <style>
+        .error {
+            color: red;
+        }
+
+        button {
+            border: none;
+            color: #fff;
+            background-image: linear-gradient(30deg, #0400ff, #4ce3f7);
+            border-radius: 20px;
+            background-size: 100% auto;
+            font-family: inherit;
+            font-size: 17px;
+            padding: 0.6em 1.5em;
+        }
+
+        button:hover {
+            background-position: right center;
+            background-size: 200% auto;
+            -webkit-animation: pulse 2s infinite;
+            animation: pulse512 1.5s infinite;
+        }
+
+        @keyframes pulse512 {
+            0% {
+                box-shadow: 0 0 0 0 #05bada66;
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgb(218 103 68 / 0%);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgb(218 103 68 / 0%);
+            }
+        }
+    </style>
+
+    <style>
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px; /* Adjust the gap between the columns as needed */
+        }
+
+        .form-row .col {
+            flex: 1;
+            min-width: 200px; /* Adjust the minimum width as needed */
+        }
+
+    </style>
+
+</head>
+<body onload="ReadStudent()">
+
+<%- include('../Links/Admin2.ejs') %>
+<div id="preloader"></div>
+
+<div id="editcourse" class="modal " tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="btn btn-primary " onclick="PersonalInfo()" type="button">Personal Info</button>
+                <button class="btn btn-primary " onclick="Address()" type="button">Address</button>
+                <button class="btn btn-primary " onclick="Photo()" type="button">Photo</button>
+                <button class="btn btn-primary " onclick="Signature()" type="button">Signature</button>
+                <button class="btn btn-primary " onclick="Degree()" type="button">Degree/Course</button>
+            </div>
+            <div class="modal-body">
+                <form id="form1" style="display: block;">
+                    <h2>Personal Information</h2>
+                    <input type="hidden" id="id">
+                    <div class="form-row mb-3">
+                        <div class="col">
+                            <label for="name">Full Name </label>
+                            <input required name="name" autocomplete="off" type="text" id="name"
+                                   class="form-control undefined">
+                        </div>
+                        <div class="col">
+                            <label for="fathername">Father's Name </label>
+                            <input required name="fathername" autocomplete="off" type="text" id="fathername"
+                                   class="form-control undefined">
+                        </div>
+                    </div>
+                    <div class="form-row mb-3">
+                        <div class="col">
+                            <label for="email">Email </label>
+                            <input required name="email" autocomplete="off" type="email" id="email"
+                                   class="form-control undefined">
+                        </div>
+                        <div class="col">
+                            <label for="mothername">Mother's Name </label>
+                            <input required name="mothername" id="mothername" class="form-control undefined">
+                        </div>
+                    </div>
+                    <div class="form-row mb-3">
+                        <div class="col">
+                            <label for="dob">Date of Birth (All as per Matric Certificate)</label>
+                            <input required name="dob" type="date" id="dob" class="form-control undefined">
+                        </div>
+                        <div class="col">
+                            <label for="mobile">Mobile Number</label>
+                            <input required name="mobile" autocomplete="off" type="tel" id="mobile"
+                                   class="form-control undefined">
+                        </div>
+                    </div>
+                    <div class="form-row mb-3">
+                        <div class="col">
+                            <label for="aadhaar">Aadhaar Number</label>
+                            <input name="aadhaar" autocomplete="off" type="text" id="aadhaar"
+                                   class="form-control undefined">
+                        </div>
+                        <div class="col">
+                            <label>Gender</label> <br>
+                            <input type="radio" name="gender" id="male" class="mr-3" value="Male">
+                            <label for="male" class="mr-8">Male</label>
+                            <input type="radio" name="gender" id="female" class="mr-3" value="Female">
+                            <label for="female" class="mr-8">Female</label>
+                            <input type="radio" name="gender" id="others" class="mr-3" value="Transgender/Others">
+                            <label for="others">Transgender/Others</label>
+                        </div>
+                    </div>
+                    <div class="form-row mb-3">
+                        <div class="col">
+                            <label for="guardian_email">Father's/Guardian's Email ID </label>
+                            <input name="guardian_email" autocomplete="off" type="email" id="guardian_email"
+                                   class="form-control" placeholder="">
+                        </div>
+                        <div class="col">
+                            <label for="guardian_mobile">Father's/Guardian's Mobile Number </label>
+                            <input name="guardian_mobile" autocomplete="off" type="tel" id="guardian_mobile"
+                                   class="form-control">
+                        </div>
+                    </div>
+
+                </form>
+
+                <form id="form2" style="display: none;">
+                    <h2>Address</h2>
+                    <input type="hidden" id="id">
+
+                    <div class="form-row mb-3">
+                        <label for="punjab_outside">Please Select Your Residential Status&nbsp;<span
+                                    class="text-danger"><b>*</b></span></label>
+                        <select required name="punjab_outside" id="punjab_outside" class="form-control undefined">
+                            <option value="">Please Select</option>
+                            <option value="Punjab Residence">Punjab Residence</option>
+                            <option value="Outside Punjab">Outside Punjab</option>
+                        </select>
+                    </div>
+
+                    <div id="container1" style="display: none" class="container-fluid" >
+                        <div class="row" style="padding: 15px 0px 6px; margin-bottom: 30px; border-radius: 4px; background-color: rgb(236, 240, 241);">
+                            <div class="col-md-12" style="margin-bottom: 10px;">
+                                <label >Please Select <span class="text-danger"><b>*</b></span></label>
+                            </div>
+                            <div class="col-md-12 mb-md-3 mb-sm-0">
+                                <div class="row">
+                                    <div class="col-lg-2">
+                                        <input name="caste" id="SC (Low Income)" type="radio" class="mr-3" value="SC (Low Income)">
+                                        <label for="SC (Low Income)">SC (Low Income)</label>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <input name="caste" id="BC" type="radio" class="mr-3" value="BC">
+                                        <label for="BC">BC</label>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <input name="caste" id="Border Area" type="radio" class="mr-3" value="Border Area">
+                                        <label for="Border Area">Border Area</label>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <input name="caste" id="Back Area" type="radio" class="mr-3" value="Back Area">
+                                        <label for="Back Area">Back Area</label>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <input name="caste" id="Sports Person" type="radio" class="mr-3" value="Sports Person">
+                                        <label for="Sports Person">Sports Person</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12 mb-md-3 mb-sm-0">
+                                <div class="row">
+                                    <div class="col-lg-4">
+                                        <input name="caste" id="Child/Grand Children of Freedom Fighter" type="radio" class="mr-3" value="Child/Grand Children of Freedom Fighter">
+                                        <label for="Child/Grand Children of Freedom Fighter">Child/Grand Children of Freedom Fighter</label>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <input name="caste" id="Defence / Ex-Serv." type="radio" class="mr-3" value="Defence / Ex-Serv.">
+                                        <label for="Defence / Ex-Serv.">Defence / Ex-Serv.</label>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <input name="caste" id="Paramilitary Persons" type="radio" class="mr-3" value="Paramilitary Persons">
+                                        <label for="Paramilitary Persons">Paramilitary Persons</label>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <input name="caste" id="Single Girl Child" type="radio" class="mr-3" value="Single Girl Child">
+                                        <label for="Single Girl Child">Single Girl Child</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12 mb-md-3 mb-sm-0">
+                                <div class="row">
+                                    <div class="col-lg-3">
+                                        <input name="caste" id="Blind (Disabled Person)" type="radio" class="mr-3" value="Blind (Disabled Person)">
+                                        <label for="Blind (Disabled Person)">Blind (Disabled Person)</label>
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <input name="caste" id="Deaf & Dumb (Disabled Person)" type="radio" class="mr-3" value="Deaf & Dumb (Disabled Person)">
+                                        <label for="Deaf & Dumb (Disabled Person)">Deaf &amp; Dumb (Disabled Person)</label>
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <input name="caste" id="Other Disability (Disabled Person)" type="radio" class="mr-3" value="Other Disability (Disabled Person)">
+                                        <label for="Other Disability (Disabled Person)">Other Disability (Disabled Person)</label>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <input name="caste" id="Tsunami Victims" type="radio" class="mr-3" value="Tsunami Victims">
+                                        <label for="Tsunami Victims">Tsunami Victims</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12 mb-md-3 mb-sm-0">
+                                <div class="row"><div class="col-lg-3">
+                                        <input name="caste" id="Victims of Terr. Viol. (1984 Riots)" type="radio" class="mr-3" value="Victims of Terr. Viol. (1984 Riots)">
+                                        <label for="Victims of Terr. Viol. (1984 Riots)">Victims of Terr. Viol. (1984 Riots)</label>
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <input name="caste" id="SC/ST" type="radio" class="mr-3" value="SC/ST">
+                                        <label for="SC/ST">SC/ST</label>
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <input name="caste" id="General" type="radio" class="mr-3" value="General">
+                                        <label for="General">General</label>
+                                    </div><div class="col-md-12"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="container2" style="display: none" class="container-fluid">
+                        <div class="row"
+                             style="padding: 15px 0px 6px; margin-bottom: 30px; border-radius: 4px; background-color: rgb(236, 240, 241);">
+                            <div class="col-md-12" style="margin-bottom: 10px;">
+                                <label>Please Select <span class="text-danger"><b>*</b></span></label>
+                            </div>
+                            <div class="col-md-2">
+                                <input type="radio" name="caste" id="SC_out" class="mr-3" value="SC">
+                                <label for="SC_out" class="mr-8">SC</label>
+                            </div>
+
+                            <div class="col-md-2">
+                                <input name="caste" id="BC_out" type="radio" class="mr-3" value="BC">
+                                <label for="BC_out">BC</label>
+                            </div>
+
+                            <div class="col-md-2">
+                                <input name="caste" id="General_out" type="radio" class="mr-3" value="General">
+                                <label for="General_out">General</label>
+                            </div>
+
+                            <div class="col-md-12">
+
+                            </div>
+
+                        </div>
+                    </div>
+
+
+                    <div class="form-row mb-3">
+                        <div class="col">
+                            <label for="address_permanent">Permanent Address <span
+                                        class="text-danger"><b>*</b></span></label>
+                            <textarea required name="address_permanent" autocomplete="off" class="form-control "
+                                      id="address_permanent" rows="3"></textarea>
+                        </div>
+                        <div class="col">
+                            <label for="district">District <span class="text-danger"><b>*</b></span></label>
+                            <input required type="text" autocomplete="off" name="district" id="district"
+                                   class="form-control undefined">
+                        </div>
+                    </div>
+
+                    <div class="form-row mb-3">
+                        <div class="col">
+                            <label for="state">State <span class="text-danger"><b>*</b></span></label>
+                            <input required type="text" autocomplete="off" name="state" id="state"
+                                   class="form-control undefined">
+                        </div>
+                        <div class="col">
+                            <label style="margin-right: 10px;">Do you wish to avail hostel</label>
+                            <input type="radio" name="hosteller" id="hostellerYes" class="me-1" value="hosteller">
+                            <label for="hostellerYes" style="margin-left: 2px; margin-right: 6px;">Yes</label>
+                            <input type="radio" name="hosteller" id="hostellerNo" class="me-1" value="day scholar">
+                            <label for="hostellerNo" style="margin-left: 2px;">No</label>
+                        </div>
+                    </div>
+                </form>
+
+                <form id="form3" style="display: none;">
+                    <h2>Student Photo</h2>
+                    <input type="hidden" id="id">
+
+                    <div class="mb-3">
+                        <label class="form-label" for="photo">Student Photo</label>
+                        <input required name="name" type="file" class="form-control" id="photo"
+                               placeholder="Enter Image"/>
+                    </div>
+                </form>
+
+                <form id="form4" style="display: none;">
+                    <h2>Signature</h2>
+                    <input type="hidden" id="id">
+
+                    <div class="mb-3">
+                        <label class="form-label" for="signature">Student Signature</label>
+                        <input required name="name" type="file" class="form-control" id="signature"
+                               placeholder="Enter Signature"/>
+                    </div>
+                </form>
+
+                <form id="form5" style="display: none;">
+                    <h2>Degree/Course</h2>
+                    <input type="hidden" id="id">
+
+                    <div class="form-row mb-3">
+                        <div class="col">
+                            <label for="degName">Degree Type <span class="text-danger"><b>*</b></span></label>
+                            <select required onchange="getCourses(this.value)" name="degName" id="degName"
+                                    class="form-control undefined">
+                                <option value="">Please Select Degree Type</option>
+                                <option value="Under Graduation">Under Graduate</option>
+                                <option value="Post Graduation">Post Graduate</option>
+                            </select>
+                        </div>
+
+                        <div class="col">
+                            <label for="course">Course <span class="text-danger"><b>*</b></span></label>
+                            <select required name="course" id="course" class="form-control undefined">
+                                <option value="">Please Select Course Type</option>
+
+                            </select>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+            <div class="modal-footer">
+                <button id="personal" class="btn btn-primary" onclick="updatePersonalInfo()" type="button">
+                    Update-Personal Info
+                </button>
+                <button id="address" style="display: none" class="btn btn-primary " onclick="updateAddress()"
+                        type="button">Update-Address
+                </button>
+                <button id="image" style="display: none" class="btn btn-primary " onclick="updatePhoto()" type="button">
+                    Update-Image
+                </button>
+                <button id="sign" style="display: none" class="btn btn-primary " onclick="updateSignature()"
+                        type="button">Update-Sign
+                </button>
+                <button id="degree" style="display: none" class="btn btn-primary " onclick="updateDegree()"
+                        type="button">Update-Degree
+                </button>
+                <button type="button" onclick="CloseEditModal()" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container">
+    <h2>Pending</h2>
+    <br> <br>
+
+    <div class="table-responsive">
+
+        <table id="myTable" class="table table-bordered table-dark table-hover ">
+            <thead>
+            <tr>
+                <th class="text-center">Sr No.</th>
+                <th class="text-center">Edit</th>
+                <th class="text-center">Name</th>
+                <th class="text-center">Email</th>
+                <th class="text-center">Profile</th>
+                <th class="text-center">Signature</th>
+                <th class="text-center">Father Name</th>
+                <th class="text-center">Mother Name</th>
+                <th class="text-center">Residence</th>
+                <th class="text-center">Degree-Name</th>
+                <th class="text-center">Course-Id</th>
+                <th class="text-center">Caste</th>
+                <th class="text-center">Aadhaar</th>
+                <th class="text-center">D-O-B</th>
+                <th class="text-center">Gender</th>
+                <th class="text-center">Phone</th>
+                <th class="text-center">Address</th>
+                <th class="text-center">District</th>
+                <th class="text-center">State</th>
+                <th class="text-center">Guardian Number</th>
+                <th class="text-center">Guardian Email</th>
+                <th class="text-center">Hostel</th>
+                <th class="text-center">Status</th>
+                <th class="text-center">Counselling-Fee</th>
+                <th class="text-center">Payment-Date</th>
+                <th class="text-center">Counselling-Fee</th>
+            </tr>
+            </thead>
+
+            <tbody id="student"></tbody>
+        </table>
+
+    </div>
+</div>
+
+
+<%- include('../Links/Footer.ejs') %>
+<%- include('../Links/Scripts.ejs') %>
+
+<script>
+    // Get the select element and the containers
+    const punjabOutsideSelect = document.getElementById('punjab_outside');
+    const container1 = document.getElementById('container1');
+    const container2 = document.getElementById('container2');
+
+    // Add an event listener to the select element
+    punjabOutsideSelect.addEventListener('change', function () {
+        const selectedValue = punjabOutsideSelect.value;
+
+        if (selectedValue === 'Punjab Residence') {
+            container1.style.display = 'block';
+            container2.style.display = 'none';
+        } else if (selectedValue === 'Outside Punjab') {
+            container1.style.display = 'none';
+            container2.style.display = 'block';
+        }
+    });
+</script>
+
+<script>
+
+    const tableRows = document.querySelectorAll('tr');
+
+    let product;
+
+    async function ReadStudent() {
+        // get user from server
+        let url = "/read-student"
+        let response = await fetch(url)
+        response = await response.json()
+        // console.log(response.error)
+        if (response.error !== "") {
+            // console.log(response.error)
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: (response.error),
+            });
+        }
+        else {
+            product = response.records
+            // console.log(response.records)
+            let html = ``;
+            for (let i = 0; i < response.records.length; i++) {
+                let record = response.records[i];
+                //console.log(record)
+                html += `<tr >
+                         <td class="text-center">${i + 1}</td>
+                         <td><button onclick="OpenEditModal(${record.id})" type="button" class="btn btn primary btn-sm">Edit</button></td>
+                         <td class="text-center text-lg-center">${record.full_name}</td>
+                         <td class="text-center">${record.email}</td>
+                         <td class="text-center"><img style="width: 50px;height: 50px" src="${record.photo}" alt=""></td>
+                         <td class="text-center"><img style="width: 50px;height: 50px" src="${record.signature}" alt=""></td>
+                         <td class="text-center">${record.father_name}</td>
+                         <td class="text-center">${record.mother_name}</td>
+                         <td class="text-center">${record.residence}</td>
+                         <td class="text-center">${record.degName}</td>
+                         <td class="text-center">${record.course_id}</td>
+                         <td class="text-center">${record.caste}</td>
+                         <td class="text-center">${record.aadhaar}</td>
+                         <td class="text-center">${record.dob}</td>
+                         <td class="text-center">${record.gender}</td>
+                         <td class="text-center">${record.phone}</td>
+                         <td class="text-center">${record.address}</td>
+                         <td class="text-center">${record.district}</td>
+                         <td class="text-center">${record.state}</td>
+                         <td class="text-center">${record.gardian_no}</td>
+                         <td class="text-center">${record.gardian_email}</td>
+                         <td class="text-center">${record.hostel}</td>
+                         <td class="text-center">${record.status}</td>
+                         <td class="text-center">${record.counselling_fee_status}</td>
+                         <td class="text-center">${record.payment_date}</td>
+                         <td class="text-center">${record.counselling_fee}</td>`
+            }
+            document.getElementById('student').innerHTML = html;
+
+            let table = new DataTable('#myTable');
+        }
+
+    }
+
+</script>
+<script>
+
+    async function SetInactive(id) {
+
+        let url = "/inactive/" + id;
+        let response = await fetch(url)
+        response = await response.json()
+        ReadUser()
+        console.log(response)
+
+    }
+
+    async function SetActive(id) {
+
+        let url = "/active/" + id;
+        let response = await fetch(url)
+        response = await response.json()
+        ReadUser()
+        console.log(response)
+    }
+
+    async function getCourses(degName) {
+        //console.log(degName)
+        let url = "/getcourses"
+        let response = await fetch(url, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({degName: degName})
+        })
+        response = await response.json();
+        // console.log(response.records)
+
+        const courseSelect = document.getElementById('course');
+        courseSelect.innerHTML = '';
+        if (response.error !== "") {
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: (response.error),
+            });
+        } else {
+            let html = `  <option value="">Please Select Course</option>`
+
+            for (let x of response.records) {
+
+                html += ` <option value="${x.id}">${x.course_name}</option>`
+
+            }
+            document.getElementById('course').innerHTML = html;
+        }
+    }
+
+    async function OpenEditModal(id) {
+
+        // console.log(product)
+        // console.log(id)
+        let dataFilter = product.filter((x) => x.id === id)
+        // console.log(dataFilter)
+        if (dataFilter.length > 0) {
+            let productData = dataFilter[0]; // Assuming IDs are unique, take the first match
+            localStorage.setItem('productData', JSON.stringify(productData));
+            // You can also populate the form with the product data here
+        }
+        $('#editcourse').modal('show');
+
+        document.getElementById("form1").style.display = 'block';
+        document.getElementById("form2").style.display = 'none';
+        document.getElementById("form3").style.display = 'none';
+        document.getElementById("form4").style.display = 'none';
+        document.getElementById("form5").style.display = 'none';
+
+        document.getElementById("personal").style.display = 'block';
+        document.getElementById("address").style.display = 'none';
+        document.getElementById("image").style.display = 'none';
+        document.getElementById("sign").style.display = 'none';
+        document.getElementById("degree").style.display = 'none';
+
+        let storedData = localStorage.getItem('productData');
+        let productData = JSON.parse(storedData);
+        //console.log(productData.gender)
+
+        if (productData.gender === "Male") {
+            document.getElementById('male').checked = true;
+        } else if (productData.gender === "Female") {
+            document.getElementById('female').checked = true;
+        } else {
+            document.getElementById('others').checked = true;
+        }
+        // console.log(productData); // Log the data to verify retrieval
+        document.getElementById('name').value = productData.full_name
+        document.getElementById('id').value = productData.id
+        document.getElementById('fathername').value = productData.father_name
+        document.getElementById('email').value = productData.email
+        document.getElementById('mothername').value = productData.mother_name
+        document.getElementById('dob').value = productData.dob
+        document.getElementById('mobile').value = productData.phone
+        document.getElementById('aadhaar').value = productData.aadhaar
+        document.getElementById('guardian_email').value = productData.gardian_email
+        document.getElementById('guardian_mobile').value = productData.gardian_no
+
+    }
+
+    async function PersonalInfo() {
+        document.getElementById("form1").style.display = 'block';
+        document.getElementById("form2").style.display = 'none';
+        document.getElementById("form3").style.display = 'none';
+        document.getElementById("form4").style.display = 'none';
+        document.getElementById("form5").style.display = 'none';
+
+        document.getElementById("personal").style.display = 'block';
+        document.getElementById("address").style.display = 'none';
+        document.getElementById("image").style.display = 'none';
+        document.getElementById("sign").style.display = 'none';
+        document.getElementById("degree").style.display = 'none';
+
+        let storedData = localStorage.getItem('productData');
+
+        if (storedData) {
+            let productData = JSON.parse(storedData);
+            if (productData.gender === "Male") {
+                document.getElementById('male').checked = true;
+            } else if (productData.gender === "Female") {
+                document.getElementById('female').checked = true;
+            } else {
+                document.getElementById('others').checked = true;
+            }
+            // console.log(productData); // Log the data to verify retrieval
+            document.getElementById('id').value = productData.id
+            document.getElementById('name').value = productData.full_name
+            document.getElementById('fathername').value = productData.father_name
+            document.getElementById('email').value = productData.email
+            document.getElementById('mothername').value = productData.mother_name
+            document.getElementById('dob').value = productData.dob
+            document.getElementById('mobile').value = productData.phone
+            document.getElementById('aadhaar').value = productData.aadhaar
+            document.getElementById('guardian_email').value = productData.gardian_email
+            document.getElementById('guardian_mobile').value = productData.gardian_no
+        }
+    }
+
+    async function Address() {
+        document.getElementById("form1").style.display = 'none';
+        document.getElementById("form2").style.display = 'block';
+        document.getElementById("form3").style.display = 'none';
+        document.getElementById("form4").style.display = 'none';
+        document.getElementById("form5").style.display = 'none';
+
+        document.getElementById("personal").style.display = 'none';
+        document.getElementById("address").style.display = 'block';
+        document.getElementById("image").style.display = 'none';
+        document.getElementById("sign").style.display = 'none';
+        document.getElementById("degree").style.display = 'none';
+
+        let storedData = localStorage.getItem('productData');
+
+        if (storedData) {
+            let productData = JSON.parse(storedData);
+            if (productData.hostel === "hosteller") {
+                document.getElementById('hostellerYes').checked = true;
+            } else {
+                document.getElementById('hostellerNo').checked = true;
+            }
+
+            if (productData.residence === "Punjab Residence") {
+                document.getElementById('container1').style.display = 'block';
+                document.getElementById('container2').style.display = 'none';
+
+                document.getElementById(`${productData.caste}`).checked = true;
+            } else {
+                document.getElementById('container1').style.display = 'none';
+                document.getElementById('container2').style.display = 'block';
+
+                document.getElementById(`${productData.caste}_out`).checked = true;
+            }
+
+            document.getElementById('id').value = productData.id
+            document.getElementById('address_permanent').value = productData.address
+            document.getElementById('punjab_outside').value = productData.residence
+            document.getElementById('district').value = productData.district
+            document.getElementById('state').value = productData.state
+
+        }
+    }
+
+    async function Photo() {
+        document.getElementById("form1").style.display = 'none';
+        document.getElementById("form2").style.display = 'none';
+        document.getElementById("form3").style.display = 'block';
+        document.getElementById("form4").style.display = 'none';
+        document.getElementById("form5").style.display = 'none';
+
+        document.getElementById("personal").style.display = 'none';
+        document.getElementById("address").style.display = 'none';
+        document.getElementById("image").style.display = 'block';
+        document.getElementById("sign").style.display = 'none';
+        document.getElementById("degree").style.display = 'none';
+        let storedData = localStorage.getItem('productData');
+
+        if (storedData) {
+            let productData = JSON.parse(storedData);
+            // console.log(productData); // Log the data to verify retrieval
+
+            document.getElementById('id').value = productData.id
+
+            document.getElementById('photo').value = ''
+        }
+    }
+
+    async function Signature() {
+        document.getElementById("form1").style.display = 'none';
+        document.getElementById("form2").style.display = 'none';
+        document.getElementById("form3").style.display = 'none';
+        document.getElementById("form4").style.display = 'block';
+        document.getElementById("form5").style.display = 'none';
+
+        document.getElementById("personal").style.display = 'none';
+        document.getElementById("address").style.display = 'none';
+        document.getElementById("image").style.display = 'none';
+        document.getElementById("sign").style.display = 'block';
+        document.getElementById("degree").style.display = 'none';
+
+        let storedData = localStorage.getItem('productData');
+
+        if (storedData) {
+            let productData = JSON.parse(storedData);
+            // console.log(productData); // Log the data to verify retrieval
+            document.getElementById('id').value = productData.id
+            document.getElementById('signature').value = ''
+        }
+    }
+
+    async function Degree() {
+        document.getElementById("form1").style.display = 'none';
+        document.getElementById("form2").style.display = 'none';
+        document.getElementById("form3").style.display = 'none';
+        document.getElementById("form4").style.display = 'none';
+        document.getElementById("form5").style.display = 'block';
+
+        document.getElementById("personal").style.display = 'none';
+        document.getElementById("address").style.display = 'none';
+        document.getElementById("image").style.display = 'none';
+        document.getElementById("sign").style.display = 'none';
+        document.getElementById("degree").style.display = 'block';
+
+        let storedData = localStorage.getItem('productData');
+
+        if (storedData) {
+            let productData = JSON.parse(storedData);
+            // console.log(productData); // Log the data to verify retrieval
+            let id = productData.course_id
+            // console.log(id)
+            let response = await fetch('/get-course-name/' + id)
+            response = await response.json()
+            // console.log(response.records[0])
+            console.log(response.records[0].course_name)
+            let courseName = response.records[0].course_name;
+
+            document.getElementById('id').value = productData.id
+            document.getElementById('degName').value = productData.degName
+            getCourses(productData.degName);
+            setTimeout(() => {
+                document.getElementById('course').value = productData.course_id
+            }, 100);
+        }
+    }
+
+    async function CloseEditModal() {
+        $('#editcourse').modal('hide');
+
+        // Remove the CSS class from the body element to restore the background
+        ReadStudent()
+    }
+
+    async function updatePersonalInfo() {
+        if (document.getElementById("form1").style.display !== 'block') return;
+
+        let formData = {
+            id: document.getElementById('id').value,
+            full_name: document.getElementById('name').value,
+            father_name: document.getElementById('fathername').value,
+            email: document.getElementById('email').value,
+            mother_name: document.getElementById('mothername').value,
+            dob: document.getElementById('dob').value,
+            phone: document.getElementById('mobile').value,
+            aadhaar: document.getElementById('aadhaar').value,
+            gender: document.querySelector('input[name="gender"]:checked').value,
+            guardian_email: document.getElementById('guardian_email').value,
+            guardian_mobile: document.getElementById('guardian_mobile').value
+        };
+
+        try {
+            let response = await fetch('/update_personal_info', {
+                method: 'POST',
+                body: JSON.stringify(formData),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            response = await response.json()
+            //console.log(response)
+            if (response.error !== "") {
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: (response.error),
+                })
+            } else {
+                //console.log("success")
+                Swal.fire({
+                    title: "Good job!",
+                    text: (response.message),
+                    icon: "success"
+                })
+                    .then(() => {
+                        CloseEditModal()
+                    })
+            }
+        } catch (error) {
+            console.error('Error updating personal information:', error);
+        }
+    }
+
+    async function updateAddress() {
+        if (document.getElementById("form2").style.display !== 'block') return;
+
+        let id = document.getElementById('id').value
+
+        let form = document.getElementById('form2')
+        let formData = new FormData(form)
+        try {
+            if ($("#form2").valid()) {
+                let response = await fetch('/update_address/' + id, {
+                    method: 'POST',
+                    body: formData
+                });
+                response = await response.json()
+                //console.log(response)
+                if (response.error !== "") {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: (response.error),
+                    })
+                } else {
+                    //console.log("success")
+                    Swal.fire({
+                        title: "Good job!",
+                        text: (response.message),
+                        icon: "success"
+                    })
+                        .then(() => {
+                            CloseEditModal()
+                        })
+                }
+            }
+        } catch (error) {
+            console.error('Error updating address information:', error);
+        }
+    }
+
+    async function updatePhoto() {
+        if (document.getElementById("form3").style.display !== 'block') return;
+
+        let photo = document.getElementById('photo').files[0]
+        let id = document.getElementById('id').value
+
+        if ($('#form3').valid()) {
+            let formData = new FormData()
+            formData.append('photo', photo)
+            formData.append('id', id)
+
+            let response = await fetch('/update_photo', {
+                method: 'POST',
+                body: formData,
+            })
+            response = await response.json()
+            //console.log(response)
+            if (response.error !== "") {
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: (response.error),
+                })
+            } else {
+                //console.log("success")
+                Swal.fire({
+                    title: "Good job!",
+                    text: (response.message),
+                    icon: "success"
+                })
+                    .then(() => {
+                        CloseEditModal()
+                    })
+            }
+        }
+    }
+
+    async function updateSignature() {
+        if (document.getElementById("form4").style.display !== 'block') return;
+
+        let signature = document.getElementById('signature').files[0]
+        let id = document.getElementById('id').value
+
+
+        let formData = new FormData()
+        formData.append('signature', signature)
+        formData.append('id', id)
+
+
+        if ($("#form4").valid()) {
+            let response = await fetch('/update_signature', {
+                method: 'POST',
+                body: formData,
+            })
+            response = await response.json()
+            //console.log(response)
+            if (response.error !== "") {
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: (response.error),
+                })
+            } else {
+                //console.log("success")
+                Swal.fire({
+                    title: "Good job!",
+                    text: (response.message),
+                    icon: "success"
+                })
+                    .then(() => {
+                        CloseEditModal()
+                    })
+            }
+        }
+    }
+
+    async function updateDegree() {
+        if (document.getElementById("form5").style.display !== 'block') return;
+
+        let formData = {
+            id: document.getElementById('id').value,
+            degree_type: document.getElementById('degName').value,
+            course: document.getElementById('course').value
+        };
+
+        try {
+            let response = await fetch('/update_degree', {
+                method: 'POST',
+                body: JSON.stringify(formData),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            response = await response.json()
+            //console.log(response)
+            if (response.error !== "") {
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: (response.error),
+                })
+            } else {
+                //console.log("success")
+                Swal.fire({
+                    title: "Good job!",
+                    text: (response.message),
+                    icon: "success"
+                })
+                    .then(() => {
+                        CloseEditModal()
+                    })
+            }
+        } catch (error) {
+            console.error('Error updating degree/course information:', error);
+        }
+    }
+
+</script>
+
+</body>
+</html>

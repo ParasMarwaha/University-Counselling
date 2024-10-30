@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="//cdn.datatables.net/2.0.8/css/dataTables.dataTables.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>Document</title>
+    <%- include('../Links/HeaderFiles.ejs') %>
+    <style>
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px; /* Adjust the gap between the columns as needed */
+        }
+        .form-row .col {
+            flex: 1;
+            min-width: 200px; /* Adjust the minimum width as needed */
+        }
+        .error {
+            color: red;
+        }
+        button {
+            border: none;
+            color: #fff;
+            background-image: linear-gradient(30deg, #0400ff, #4ce3f7);
+            border-radius: 20px;
+            background-size: 100% auto;
+            font-family: inherit;
+            font-size: 17px;
+            padding: 0.6em 1.5em;
+        }
+        button:hover {
+            background-position: right center;
+            background-size: 200% auto;
+            -webkit-animation: pulse 2s infinite;
+            animation: pulse512 1.5s infinite;
+        }
+        @keyframes pulse512 {
+            0% {
+                box-shadow: 0 0 0 0 #05bada66;
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgb(218 103 68 / 0%);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgb(218 103 68 / 0%);
+            }
+        }
+        /*.table-container {*/
+        /*    display: flex;*/
+        /*    justify-content: center;*/
+        /*}*/
+        /*.table-responsive {*/
+        /*    width: 100%;*/
+        /*    max-width: 1000px; !* Adjust the max width as needed *!*/
+        /*}*/
+    </style>
+</head>
+<body>
+<div id="preloader"></div>
+<%- include('../Links/Admin2.ejs') %>
+<div class="inner-page-banner-area" style="background-image: url('/img/about/1.jpg');">
+    <div class="container">
+        <div class="pagination-area">
+        </div>
+    </div>
+</div>
+
+<div class="container">
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="profile-details tab-content">
+                <div class="tab-pane tab-item animated fadeIn show active" id="menu-1" role="tabpanel" aria-labelledby="menu-1-tab">
+                    <h3 class="title-section title-bar-high mb-40">Allotted Seats</h3>
+                    <form id="Seats">
+                        <div class="form-row mb-3">
+                            <div class="col">
+                                <label class="form-label" for="degName">Degree Type</label>
+                                <select onchange="getCourses(this.value)" required name="degName" id="degName" class="form-control undefined">
+                                    <option value="">Select Degree</option>
+                                    <option value="Under Graduation">Under Graduate</option>
+                                    <option value="Post Graduation">Post Graduate</option>
+                                </select>
+                            </div>
+                            <div class="col">
+                                <label class="form-label" for="course">Choose Preference</label>
+                                <select required name="course" id="course" class="form-control undefined">
+                                    <option value="">Select Course</option>
+                                </select>
+                            </div>
+                            <div class="col">
+                                <label class="form-label" for="punjab_outside">Residential Status</label>
+                                <select required name="punjab_outside" id="punjab_outside" class="form-control undefined">
+                                    <option value="">Please Select</option>
+                                    <option value="Punjab Residence">Punjab Residence</option>
+                                    <option value="Outside Punjab">Outside Punjab</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="button" onclick="Search()" class="btn btn-primary offset-10"><i class="fa fa-search"></i>Search</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" id="tableContainer" style="display: none;">
+        <div class="col-lg-12">
+            <table id="Table" class="table table-dark table-bordered">
+                <thead>
+                <tr>
+                    <th class="text-center">Sr No.</th>
+                    <th class="text-center">Sent E-mail</th>
+                    <th class="text-center">Student-ID</th>
+                    <th class="text-center">Course-ID</th>
+                    <th class="text-center">Staff-ID</th>
+                    <th class="text-center">Residence</th>
+                    <th class="text-center">Caste</th>
+                    <th class="text-center">Date</th>
+                </tr>
+                </thead>
+                <tbody id="Allotted-Table">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<%- include('../Links/Footer.ejs') %>
+<%- include('../Links/Scripts.ejs') %>
+<script>
+    async function Search() {
+        let form = document.getElementById('Seats')
+        let formData = new FormData(form)
+
+        let formObject = {};
+        formData.forEach((value, key) => formObject[key] = value);
+        localStorage.setItem('formData', JSON.stringify(formObject));
+
+        if ($("#Seats").valid()) {
+            let response = await fetch('/Allotted-seat-search', {
+                method: 'POST',
+                body: formData
+            })
+            response = await response.json()
+           // console.log(response)
+            if (response.error !== "") {
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: (response.error),
+                })
+            }
+            else {
+                let html = ``;
+                for (let i = 0; i < response.records.length; i++) {
+                    let record = response.records[i];
+                    if(record.emailStatus === "SENT"){
+                        html += `<tr>
+                             <td class="text-center">${i + 1}</td>
+                             <td style="color: green" class="text-center"><i class="fas fa-check"></i>Sent</td>
+                             <td class="text-center text-lg-center">${record.full_name}</td>
+                             <td class="text-center">${record.course_name}</td>
+                             <td class="text-center">${record.name}</td>
+                             <td class="text-center">${record.residense}</td>
+                             <td class="text-center">${record.caste}</td>
+                             <td class="text-center">${record.date}</td>
+                        </tr>`;
+                    } else{
+                        html += `<tr>
+                             <td class="text-center">${i + 1}</td>
+                             <td class="text-center"><button onclick="Email(${record.student_id})" type="button" class="btn btn-primary">
+                             Send</button></td>
+                             <td class="text-center text-lg-center">${record.full_name}</td>
+                             <td class="text-center">${record.course_name}</td>
+                             <td class="text-center">${record.name}</td>
+                             <td class="text-center">${record.residense}</td>
+                             <td class="text-center">${record.caste}</td>
+                             <td class="text-center">${record.date}</td>
+                        </tr>`;
+                    }
+
+                }
+                document.getElementById('Allotted-Table').innerHTML = html;
+                document.getElementById('tableContainer').style.display = 'block'; // Show the table
+                let table = new DataTable('#Table');
+            }
+        }
+    }
+
+    async function getCourses(degName){
+        //console.log(degName)
+        let url = "/getcourses"
+        let response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ degName: degName })
+        })
+        response = await response.json();
+        // console.log(response.records)
+        const courseSelect = document.getElementById('course');
+        courseSelect.innerHTML = '';
+        if (response.error !== "") {
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: (response.error),
+            });
+        } else {
+            let html = `<option value="">Select Course</option>`
+            for (let x of response.records) {
+                html += `<option value="${x.id}">${x.course_name}</option>`
+            }
+            document.getElementById('course').innerHTML = html;
+        }
+    }
+
+    async function Email(id){
+        //console.log(id)
+        let response = await fetch('/send-email/' + id )
+        response = await response.json()
+        //console.log(response)
+        if (response.error !== "") {
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: (response.error),
+            })
+        }
+        else{
+            console.log(response.records)
+            Swal.fire({
+                icon: "success",
+                title: "Good Job!",
+                text: (response.message),
+            }).then(()=>{
+                Search()
+            })
+        }
+    }
+
+</script>
+</body>
+</html>

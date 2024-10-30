@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <%- include('../Links/HeaderFiles.ejs') %>
+    <style>
+        .error {
+            color: red !important;
+        }
+    </style>
+    <title>Document</title>
+</head>
+<body>
+
+
+<div id="wrapper">
+
+
+    <div class="container">
+        <div class="col-lg-6 offset-md-3">
+            <div class="login-form">
+
+                <div class="title-default-left-bold">Login</div>
+
+                <form id="form">
+                    <label>Username or email address *</label>
+                    <input required type="text" name="email" id="email" placeholder="Enter Email">
+                    <label>Password *</label>
+                    <input required type="password" name="password" id="password" placeholder="Enter Password">
+                    <label><a style="color: #0b5ed7" href="/admin-forgot">Forgot Password ?</a></label>
+                    <button class="default-big-btn" type="button" onclick="Login()">Login</button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-area-top">
+            <div class="container">
+                <div class="row">
+
+                </div>
+            </div>
+        </div>
+    </footer>
+    <footer>
+        <div class="footer-area-top">
+            <div class="container">
+                <div class="row">
+
+                </div>
+            </div>
+        </div>
+    </footer>
+    <footer>
+        <div class="footer-area-top">
+            <div class="container">
+                <div class="row">
+
+                </div>
+            </div>
+        </div>
+    </footer>
+    <footer>
+        <div class="footer-area-top">
+            <div class="container">
+                <div class="row">
+
+                </div>
+            </div>
+        </div>
+    </footer>
+    <footer>
+        <div class="footer-area-top">
+            <div class="container">
+                <div class="row">
+
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <%- include('../Links/Footer.ejs') %>
+
+
+</div>
+
+<%- include('../Links/Scripts.ejs') %>
+
+<script>
+    async function Login() {
+        let email = document.getElementById('email').value
+        let password = document.getElementById('password').value
+
+        if ($('#form').valid()) {
+            let url = "/login"
+            let response = await fetch(url, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({email: email, password: password})
+            })
+            response = await response.json()
+            console.log(response)
+
+            if (response.error !== "") {
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: (response.error)
+                });
+            } else {
+                Swal.fire({
+                    title: "Good job!",
+                    text: (response.message),
+                    icon: "success"
+                }).then(() => {
+                    window.location.href = "/admin-dashboard"
+                })
+
+            }
+        }
+
+    }
+</script>
+</body>
+
+
+</html>

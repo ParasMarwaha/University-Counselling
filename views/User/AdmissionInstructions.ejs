@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <title>Document</title>
+    <%- include('../Links/HeaderFiles.ejs') %>
+    <style>
+        .error{
+            color: red;
+        }
+    </style>
+    <style>
+        .styled-link {
+            text-decoration: none; /* Remove the default underline */
+            border-bottom: 2px solid #007bff; /* Add a custom underline */
+            color: #007bff; /* Link color */
+            font-size: 16px; /* Font size */
+            padding-bottom: 2px; /* Adjust padding to match underline thickness */
+            transition: color 0.3s, border-color 0.3s; /* Smooth transition for hover effect */
+        }
+
+        .styled-link:hover {
+            color: #0056b3; /* Darker shade for hover effect */
+            border-bottom: 2px solid #0056b3; /* Darker underline for hover effect */
+        }
+    </style>
+</head>
+<body>
+
+<div id="preloader"></div>
+
+<div id="wrapper">
+
+    <%- include('../Links/Header.ejs') %>
+
+    <div class="inner-page-banner-area" style="background-image: url('/img/about/1.jpg');">
+        <div class="container">
+            <div class="pagination-area">
+            </div>
+        </div>
+    </div>
+
+    <div class="container p-5">
+        <h3>Admission Instructions</h3>
+    </div>
+
+    <div class="container">
+        <div class="big-title text-center"></div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="defaultform contact_form alert">
+                    <div class="mb-35">
+                        <h5 style="color: red"> Please Read These Instructions Carefully</h5>
+                        <ol>
+                            <li>Fill out the admission form:
+                                <ul>
+                                    <li>Click on the link below for registration</li>
+                                    <li>Complete the online admission form with accurate and up-to-date information.</li>
+                                    <li>Ensure all required fields are filled out correctly before submitting the form.</li>
+                                </ul>
+                            </li>
+                            <li>Login details will be shared via email:
+                                <ul>
+                                    <li>After submitting the admission form, check your email for a message from our admissions office.</li>
+                                    <li>The email will contain your login credentials for accessing the student dashboard.</li>
+                                    <li>If you do not receive an email within 24 hours, please contact our support team.</li>
+                                </ul>
+                            </li>
+                            <li>Log in to the dashboard:
+                                <ul>
+                                    <li>Using the credentials provided, log in to the student dashboard on our website.</li>
+                                    <li>If you encounter any issues logging in, use the 'Forgot Password' option </li>
+                                    <li style="color: red">Please make sure to pay Counselling Fee to move forward </li>
+                                </ul>
+                            </li>
+                            <li>Upload your preferences:
+                                <ul>
+                                    <li>Once logged in, navigate to the 'Preferences' section of the dashboard.</li>
+                                    <li>Select and upload your course preferences.</li>
+                                    <li>Ensure your preferences are ranked in order of priority.</li>
+                                </ul>
+                            </li>
+                            <li>Upload your marks:
+                                <ul>
+                                    <li>Go to the 'Academic Records' section of the dashboard.</li>
+                                    <li>Submit Your Marks .</li>
+                                </ul>
+                            </li>
+                            <li>Lock your dashboard:
+                                <ul>
+                                    <li>Review all the information and documents you have uploaded.</li>
+                                    <li>Once you are certain that all details are correct, lock your dashboard to finalize your submission.</li>
+                                    <li>Note that once locked, you will not be able to make further changes.</li>
+                                </ul>
+                            </li>
+                            <li>You will receive a confirmation within 10 working days:
+                                <ul>
+                                    <li>Our admissions team will review your application and documents.</li>
+                                    <li>You will receive a confirmation email within 10 working days regarding the status of your application.</li>
+                                    <li>If additional information or documents are required, you will be notified via email.</li>
+
+                                </ul>
+                            </li>
+                        </ol>
+                        <a href="/admission-form" class="styled-link" >Click here to register...</a>
+
+                    </div>
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <%- include('../Links/Footer.ejs') %>
+
+</div>
+
+<%- include('../Links/Scripts.ejs') %>
+
+</body>
+</html>

@@ -1,0 +1,1105 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    <title>Document</title>
+    <%- include('../Links/HeaderFiles.ejs') %>
+    <style>
+        .error {
+            color: red;
+        }
+
+        .popup {
+            position: relative;
+            width: 320px;
+            height: fit-content;
+            background: #FFFFFF;
+            box-shadow: 0px 187px 75px rgba(0, 0, 0, 0.01), 0px 105px 63px rgba(0, 0, 0, 0.05), 0px 47px 47px rgba(0, 0, 0, 0.09), 0px 12px 26px rgba(0, 0, 0, 0.1), 0px 0px 0px rgba(0, 0, 0, 0.1);
+            border-radius: 13px;
+        }
+
+        .form {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        .note {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .title {
+            font-style: normal;
+            font-weight: 700;
+            font-size: 17px;
+            line-height: 24px;
+            color: #2B2B2F;
+        }
+
+        .subtitle {
+            font-style: normal;
+            font-weight: 600;
+            font-size: 13px;
+            line-height: 18px;
+            color: #5F5D6B;
+        }
+
+        .form button.button {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            padding: 10px 18px;
+            gap: 10px;
+            width: 100%;
+            height: 42px;
+            background: linear-gradient(180deg, #4480FF 0%, #115DFC 50%, #0550ED 100%);
+            box-shadow: 0px 0.5px 0.5px #EFEFEF, 0px 1px 0.5px rgba(239, 239, 239, 0.5);
+            border-radius: 5px;
+            border: 0;
+            font-style: normal;
+            font-weight: 600;
+            font-size: 12px;
+            line-height: 15px;
+            color: #ffffff;
+        }
+    </style>
+
+    <style>
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px; /* Adjust the gap between the columns as needed */
+        }
+
+        .form-row .col {
+            flex: 1;
+            min-width: 200px; /* Adjust the minimum width as needed */
+        }
+
+    </style>
+
+    <style>
+        .styled-button {
+            display: flex;
+            align-items: center;
+            font-family: inherit;
+            font-weight: 500;
+            font-size: 17px;
+            padding: 0.8em 1.5em 0.8em 1.2em;
+            color: white;
+            background: #ad5389;
+            background: linear-gradient(0deg, rgba(77,54,208,1) 0%, rgba(132,116,254,1) 100%);
+            border: none;
+            box-shadow: 0 0.7em 1.5em -0.5em #4d36d0be;
+            letter-spacing: 0.05em;
+            border-radius: 20em;
+        }
+
+        .styled-button svg {
+            margin-right: 8px;
+        }
+
+        .styled-button:hover {
+            box-shadow: 0 0.5em 1.5em -0.5em #4d36d0be;
+        }
+
+        .styled-button:active {
+            box-shadow: 0 0.3em 1em -0.5em #4d36d0be;
+        }
+
+        .error {
+            color: red;
+        }
+    </style>
+
+</head>
+<body onload="Check()">
+
+<div id="preloader"></div>
+
+<div>
+    <%- include('../Links/UserHeader.ejs') %>
+
+    <div class="inner-page-banner-area" style="background-image: url('/img/about/1.jpg');">
+        <div class="container">
+            <div class="pagination-area">
+            </div>
+        </div>
+    </div>
+
+    <div id="chooseCourse" class="modal " tabindex="-1">
+        <div class="modal-dialog ">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Choose Course</h5>
+                    <button type="button" onclick="CloseModal()" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="choose">
+                        <label for="course">Choose Preference</label>
+                        <select required name="course" id="course" class="form-control undefined">
+                            <option value="">Please Select Course Type</option>
+                        </select>
+                    </form>
+                    <hr>
+                    <table class="table table-hover table-dark">
+                        <thead>
+                        <tr>
+                            <th>Sr No.</th>
+                            <th>Course Name</th>
+                        </tr>
+                        </thead>
+                        <tbody id="courseTable"></tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="CloseModal()" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Close
+                    </button>
+                    <button type="button" onclick="Add()" class="btn btn-primary">Add</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marks" class="modal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Upload Marks</h5>
+                    <button type="button" onclick="CloseMarksModal1()" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formMarks1">
+                        <div class="form-row mb-3">
+                            <div class="col">
+                                <label class="form-label" for="board">Board</label>
+                                <select required name="board" id="board" class="dropdown-toggle form-control">
+                                    <option value="">Please Select Your Board</option>
+                                    <option value="CBSE">CBSE</option>
+                                    <option value="ICSE">ICSE</option>
+                                    <option value="Punjab Board">Punjab Board</option>
+                                </select>
+                            </div>
+                            <div class="col">
+                                <label class="form-label" for="rollNumber">Roll Number</label>
+                                <input required name="rollNumber" type="text" class="form-control" id="rollNumber" placeholder="Enter Marks" />
+                            </div>
+                        </div>
+
+                        <div class="form-row mb-3">
+                            <div class="col">
+                                <label class="form-label" for="subject1">Subject-1</label>
+                                <input class="form-control" name="subject1" type="text" id="subject1" value="Physics" disabled>
+                            </div>
+                            <div class="col">
+                                <label class="form-label" for="maxMarks1">Maximum Marks</label>
+                                <input required name="maxMarks1" type="number" class="form-control" id="maxMarks1" placeholder="Enter Marks" min="0" max="100" />
+                            </div>
+                            <div class="col">
+                                <label class="form-label" for="obtainedMarks1">Obtained Marks</label>
+                                <input required name="obtainedMarks1" type="number" class="form-control" id="obtainedMarks1" placeholder="Enter Marks" min="0" max="100" />
+                                <div id="error1" class="error"></div><br>
+                            </div>
+                        </div>
+
+                        <div class="form-row mb-3">
+                            <div class="col">
+                                <label class="form-label" for="subject2">Subject-2</label>
+                                <input class="form-control" name="subject2" type="text" id="subject2" value="Chemistry" disabled>
+                            </div>
+                            <div class="col">
+                                <label class="form-label" for="maxMarks2">Maximum Marks</label>
+                                <input required name="maxMarks2" type="number" class="form-control" id="maxMarks2" placeholder="Enter Marks" min="0" max="100" />
+                            </div>
+                            <div class="col">
+                                <label class="form-label" for="obtainedMarks2">Obtained Marks</label>
+                                <input required name="obtainedMarks2" type="number" class="form-control" id="obtainedMarks2" placeholder="Enter Marks" min="0" max="100" />
+                                <div id="error2" class="error"></div><br>
+
+                            </div>
+                        </div>
+
+                        <div class="form-row mb-3">
+                            <div class="col">
+                                <label class="form-label" for="subject3">Subject-3</label>
+                                <input class="form-control" name="subject3" type="text" id="subject3" value="Maths" disabled>
+                            </div>
+                            <div class="col">
+                                <label class="form-label" for="maxMarks3">Maximum Marks</label>
+                                <input required name="maxMarks3" type="number" class="form-control" id="maxMarks3" placeholder="Enter Marks" min="0" max="100" />
+                            </div>
+                            <div class="col">
+                                <label class="form-label" for="obtainedMarks3">Obtained Marks</label>
+                                <input required name="obtainedMarks3" type="number" class="form-control" id="obtainedMarks3" placeholder="Enter Marks" min="0" max="100" />
+                                <div id="error3" class="error"></div><br>
+
+                            </div>
+                        </div>
+
+                        <div class="form-row mb-3">
+                            <div class="col">
+                                <label class="form-label" for="subject4">Subject-4</label>
+                                <input required type="text" name="subject4" id="subject4" class="form-control">
+                            </div>
+                            <div class="col">
+                                <label class="form-label" for="maxMarks4">Maximum Marks</label>
+                                <input required name="maxMarks4" type="number" class="form-control" id="maxMarks4" placeholder="Enter Marks" min="0" max="100" />
+                            </div>
+                            <div class="col">
+                                <label class="form-label" for="obtainedMarks4">Obtained Marks</label>
+                                <input required name="obtainedMarks4" type="number" class="form-control" id="obtainedMarks4" placeholder="Enter Marks" min="0" max="100" />
+                                <div id="error4" class="error"></div><br>
+                            </div>
+                        </div>
+
+                        <div class="form-row mb-3">
+                            <div class="col">
+                                <label class="form-label" for="subject5">Subject-5</label>
+                                <input required type="text" name="subject5" id="subject5" class="form-control">
+                            </div>
+                            <div class="col">
+                                <label class="form-label" for="maxMarks5">Maximum Marks</label>
+                                <input required name="maxMarks5" type="number" class="form-control" id="maxMarks5" placeholder="Enter Marks" min="0" max="100" />
+                            </div>
+                            <div class="col">
+                                <label class="form-label" for="obtainedMarks5">Obtained Marks</label>
+                                <input required name="obtainedMarks5" type="number" class="form-control" id="obtainedMarks5" placeholder="Enter Marks" min="0" max="100" />
+                                <div id="error5" class="error"></div><br>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="CloseMarksModal1()" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Close
+                    </button>
+                    <button type="button" id="btn1" onclick="AddMarks1()" class="btn btn-primary">Upload</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marks2" class="modal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Upload MARKS</h5>
+                    <button type="button" onclick="CloseMarksModal2()" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formMarks2">
+                        <div class="form-row mb-3">
+                            <div class="col">
+                                <label class="form-label" for="board">Board</label>
+                                <select required name="board2" id="board2" class="dropdown-toggle form-control">
+                                    <option value="">Please Select Your Board</option>
+                                    <option value="CBSE">CBSE</option>
+                                    <option value="ICSE">ICSE</option>
+                                    <option value="Punjab Board">Punjab Board</option>
+                                </select>
+                            </div>
+                            <div class="col">
+                                <label class="form-label" for="rollNumber">Roll Number</label>
+                                <input required name="rollNumber2" type="text" class="form-control" id="rollNumber2" placeholder="Enter Marks" />
+                            </div>
+                        </div>
+
+                        <div class="form-row mb-3">
+                            <div class="col">
+                                <label class="form-label" for="subject1">Subject-1</label>
+                                <input class="form-control" name="subject12" type="text" id="subject12" placeholder="Enter Subject" >
+                            </div>
+                            <div class="col">
+                                <label class="form-label" for="maxMarks1">Maximum Marks</label>
+                                <input required name="maxMarks12" type="number" class="form-control" id="maxMarks12" placeholder="Enter Marks" min="0" max="100" />
+                            </div>
+                            <div class="col">
+                                <label class="form-label" for="obtainedMarks1">Obtained Marks</label>
+                                <input required name="obtainedMarks12" type="number" class="form-control" id="obtainedMarks12" placeholder="Enter Marks" min="0" max="100" />
+                                <div id="error6" class="error"></div><br>
+                            </div>
+                        </div>
+
+                        <div class="form-row mb-3">
+                            <div class="col">
+                                <label class="form-label" for="subject2">Subject-2</label>
+                                <input class="form-control" name="subject22" type="text" id="subject22" placeholder="Enter Subject">
+                            </div>
+                            <div class="col">
+                                <label class="form-label" for="maxMarks2">Maximum Marks</label>
+                                <input required name="maxMarks22" type="number" class="form-control" id="maxMarks22" placeholder="Enter Marks" min="0" max="100" />
+                            </div>
+                            <div class="col">
+                                <label class="form-label" for="obtainedMarks2">Obtained Marks</label>
+                                <input required name="obtainedMarks22" type="number" class="form-control" id="obtainedMarks22" placeholder="Enter Marks" min="0" max="100" />
+                                <div id="error7" class="error"></div><br>
+
+                            </div>
+                        </div>
+
+                        <div class="form-row mb-3">
+                            <div class="col">
+                                <label class="form-label" for="subject3">Subject-3</label>
+                                <input class="form-control" name="subject32" type="text" id="subject32" placeholder="Enter Subject">
+                            </div>
+                            <div class="col">
+                                <label class="form-label" for="maxMarks3">Maximum Marks</label>
+                                <input required name="maxMarks32" type="number" class="form-control" id="maxMarks32" placeholder="Enter Marks" min="0" max="100" />
+                            </div>
+                            <div class="col">
+                                <label class="form-label" for="obtainedMarks3">Obtained Marks</label>
+                                <input required name="obtainedMarks32" type="number" class="form-control" id="obtainedMarks32" placeholder="Enter Marks" min="0" max="100" />
+                                <div id="error8" class="error"></div><br>
+
+                            </div>
+                        </div>
+
+                        <div class="form-row mb-3">
+                            <div class="col">
+                                <label class="form-label" for="subject4">Subject-4</label>
+                                <input required type="text" name="subject42" id="subject42" class="form-control" placeholder="Enter Subject">
+                            </div>
+                            <div class="col">
+                                <label class="form-label" for="maxMarks4">Maximum Marks</label>
+                                <input required name="maxMarks42" type="number" class="form-control" id="maxMarks42" placeholder="Enter Marks" min="0" max="100" />
+                            </div>
+                            <div class="col">
+                                <label class="form-label" for="obtainedMarks4">Obtained Marks</label>
+                                <input required name="obtainedMarks42" type="number" class="form-control" id="obtainedMarks42" placeholder="Enter Marks" min="0" max="100" />
+                                <div id="error9" class="error"></div><br>
+                            </div>
+                        </div>
+
+                        <div class="form-row mb-3">
+                            <div class="col">
+                                <label class="form-label" for="subject5">Subject-5</label>
+                                <input required type="text" name="subject52" id="subject52" class="form-control" placeholder="Enter Subject">
+                            </div>
+                            <div class="col">
+                                <label class="form-label" for="maxMarks5">Maximum Marks</label>
+                                <input required name="maxMarks52" type="number" class="form-control" id="maxMarks52" placeholder="Enter Marks" min="0" max="100" />
+                            </div>
+                            <div class="col">
+                                <label class="form-label" for="obtainedMarks5">Obtained Marks</label>
+                                <input required name="obtainedMarks52" type="number" class="form-control" id="obtainedMarks52" placeholder="Enter Marks" min="0" max="100" />
+                                <div id="error10" class="error"></div><br>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="CloseMarksModal2()" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Close
+                    </button>
+                    <button id="btn2" type="button" onclick="AddMarks2()" class="btn btn-primary">Upload</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="marks3" class="modal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Upload POST Marks</h5>
+                    <button type="button" onclick="CloseMarksModal3()" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formMarks3">
+
+                        <div class="form-row mb-3">
+                            <div class="col">
+                                <label class="form-label" for="uni">University-College</label>
+                                <select required name="uni" id="uni" class="dropdown-toggle form-control " >
+                                    <option value="">Please Select Uni/College</option>
+                                    <option value="GNDU">Guru Nanak Dev University</option>
+                                    <option value="Khalsa College">Khalsa College</option>
+                                </select>
+                            </div>
+                            <div class="col">
+                                <label class="form-label" for="rollNumber3">Roll Number</label>
+                                <input required name="rollNumber" type="number" class="form-control" id="rollNumber3"
+                                       placeholder="Enter Roll No."/>
+                            </div>
+                        </div>
+
+                        <div class="form-row mb-3">
+                            <div class="col">
+                                <label class="form-label" for="collegeMaxMarks">Uni/College Max Marks</label>
+                                <input required name="collegeMaxMarks" type="number" class="form-control" id="collegeMaxMarks"
+                                       placeholder="Enter Marks"/>
+                            </div>
+                            <div class="col">
+                                <label class="form-label" for="collegeObtMarks">Uni/College Obtained Marks</label>
+                                <input required name="collegeObtMarks" type="number" class="form-control" id="collegeObtMarks"
+                                       placeholder="Enter Marks"/>
+                                <div id="error11" class="error"></div><br>
+
+                            </div>
+                        </div>
+
+
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="CloseMarksModal3()" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Close
+                    </button>
+                    <button id="btn3" type="button" onclick="AddMarks3()" class="btn btn-primary">Upload</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 p-4">
+                <div class="popup">
+                    <form id="pay-form" class="form">
+                        <div class="note">
+                            <input id="amount" type="hidden" value="<%= counselling_fee %>"/>
+                            <input id="status" type="hidden" value="<%= counselling_fees_status %>"/>
+                            <label class="title">Pending Counselling Fee</label>
+                            <span class="subtitle">Name: <%= name %></span>
+                            <span class="subtitle">Father's Name: <%= father %></span>
+                        </div>
+                        <button onClick="PayNow()" type="button" class="button">Pay <%= counselling_fee %></button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="col-lg-6 offset-md-10">
+                <button id="lockButton" style="display: block;" type="button" onclick="LockDash()" class="styled-button">Lock Dashboard</button>
+                <button type="button" id="downloadButton" style="display: none;" class="styled-button">  <svg height="24" width="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"></path><path d="M1 14.5a6.496 6.496 0 0 1 3.064-5.519 8.001 8.001 0 0 1 15.872 0 6.5 6.5 0 0 1-2.936 12L7 21c-3.356-.274-6-3.078-6-6.5zm15.848 4.487a4.5 4.5 0 0 0 2.03-8.309l-.807-.503-.12-.942a6.001 6.001 0 0 0-11.903 0l-.12.942-.805.503a4.5 4.5 0 0 0 2.029 8.309l.173.013h9.35l.173-.013zM13 12h3l-4 5-4-5h3V8h2v4z" fill="currentColor"></path></svg>
+                    <span>Download</span></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" id="tag" style="display: none">
+        <div class="row">
+            <h2>Welcome <%= name %></h2>
+            <input type="hidden" id="lockStat" value="<%=lockStatus%>">
+            <div style="box-shadow:0 4px 8px rgba(0, 0, 0, 0.1)" class="col-lg-4 mb-3 ">
+                <h3 class="text-center">Choose Preferences</h3>
+                <div class="d-flex justify-content-center">
+                    <button type="button" id="pref-button" onclick="OpenModal()" class="btn btn-primary btn-sm ">Choose Course</button>
+                </div>
+
+            </div>
+
+            <div class="col-lg-2"></div>
+
+            <div style="box-shadow:0 4px 8px rgba(0, 0, 0, 0.1)" class="col-lg-4 mb-3">
+                <h3 class="text-center">Upload Marks</h3>
+                <div class="d-flex justify-content-center">
+                    <button type="button" id="marks-button" onclick="CheckPref()" class="btn btn-primary btn-sm ">Upload Marks
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br><br>
+
+    <%- include('../Links/Footer.ejs') %>
+</div>
+
+<%- include('../Links/Scripts.ejs') %>
+<script>
+
+    const PayNow = () => {
+        let amount = document.getElementById("amount").value;
+        console.log(amount);
+        let options = {
+            key: "rzp_test_dRWiKHS7zr2Gki",
+            amount: amount * 100,
+            name: "University",
+            description: "Counselling Fee",
+            image: "/img/logo-primary.png",
+            handler: function (response) {
+                RazorPayResponse(response);
+            },
+            theme: {
+                color: "SlateBlue",
+            },
+        };
+
+        let rzp1 = new Razorpay(options);
+        rzp1.open();
+    };
+
+    const RazorPayResponse = async (response) => {
+        if (response.razorpay_payment_id !== "") {
+            console.log(response.razorpay_payment_id);
+            Paid();
+        }
+    }
+
+    async function Paid() {
+        let url = "/student-paid/<%= counselling_fee %>";
+        let response = await fetch(url);
+        response = await response.json();
+        console.log(response);
+        if (response.error !== "") {
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: response.error,
+            });
+        } else {
+            Swal.fire({
+                title: "Good job!",
+                text: response.message,
+                icon: "success"
+            }).then(() => {
+                document.getElementById("tag").style.display = 'block';
+                document.getElementById("pay-form").style.display = 'none';
+            });
+        }
+    }
+
+    async function Check() {
+        let status = document.getElementById("status").value;
+        let lockstatus = document.getElementById("lockStat").value;
+
+        if (status === "PAID") {
+            document.getElementById("tag").style.display = 'block';
+            document.getElementById("pay-form").style.display = 'none';
+            getCourses()
+        }
+        if(lockstatus ==="Locked"){
+            document.getElementById('pref-button').disabled = true;
+            document.getElementById('marks-button').disabled = true;
+            lockButton.style.display='none';
+            downloadButton.style.display='block';
+        }
+    }
+
+    async function getCourses() {
+        //console.log(degName)
+        let url = "/getcourses/<%= degName %>"
+        let response = await fetch(url)
+        response = await response.json();
+        // console.log(response.records)
+
+        const courseSelect = document.getElementById('course');
+        courseSelect.innerHTML = '';
+        if (response.error !== "") {
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: (response.error),
+            });
+        } else {
+            let html = `  <option value="">Please Select Course</option>`
+
+            for (let x of response.records) {
+
+                html += ` <option value="${x.id}">${x.course_name}</option>`
+
+            }
+            document.getElementById('course').innerHTML = html;
+        }
+    }
+
+    function OpenModal() {
+        $('#chooseCourse').modal('show');
+
+        // Add a CSS class to the body element to dim the background
+        Show()
+    }
+
+    function CloseModal() {
+        $('#chooseCourse').modal('hide');
+
+        // Remove the CSS class from the body element to restore the background
+    }
+
+    async function OpenMarksModal1() {
+        let response = await fetch('/checkData');
+        response = await response.json();
+
+        if (response.error !== "") {
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: response.error,
+            });
+        }
+        else if(response.message === 'EMPTY'){
+            $('#marks').modal('show');
+        }
+        else {
+            let record = response.results[0];
+
+            // Populate form fields with the record data
+            document.getElementById('board').value = record.board;
+            document.getElementById('rollNumber').value = record.roll_number;
+            document.getElementById('maxMarks1').value = record.max_marks1;
+            document.getElementById('obtainedMarks1').value = record.ob_marks1;
+            document.getElementById('maxMarks2').value = record.max_marks2;
+            document.getElementById('obtainedMarks2').value = record.ob_marks2;
+            document.getElementById('maxMarks3').value = record.max_marks3;
+            document.getElementById('obtainedMarks3').value = record.ob_marks3;
+            document.getElementById('subject4').value = record.sub4;
+            document.getElementById('maxMarks4').value = record.max_marks4;
+            document.getElementById('obtainedMarks4').value = record.ob_marks4;
+            document.getElementById('subject5').value = record.sub5;
+            document.getElementById('maxMarks5').value = record.max_marks5;
+            document.getElementById('obtainedMarks5').value = record.ob_marks5;
+
+            // Disable all fields after populating
+            document.getElementById('board').disabled = true;
+            document.getElementById('rollNumber').disabled = true;
+            document.getElementById('maxMarks1').disabled = true;
+            document.getElementById('obtainedMarks1').disabled = true;
+            document.getElementById('maxMarks2').disabled = true;
+            document.getElementById('obtainedMarks2').disabled = true;
+            document.getElementById('maxMarks3').disabled = true;
+            document.getElementById('obtainedMarks3').disabled = true;
+            document.getElementById('subject4').disabled = true;
+            document.getElementById('maxMarks4').disabled = true;
+            document.getElementById('obtainedMarks4').disabled = true;
+            document.getElementById('subject5').disabled = true;
+            document.getElementById('maxMarks5').disabled = true;
+            document.getElementById('obtainedMarks5').disabled = true;
+            document.getElementById('btn1').disabled = true;
+        }
+
+        $('#marks').modal('show');
+    }
+    function CloseMarksModal1() {
+        $('#marks').modal('hide');
+
+        // Remove the CSS class from the body element to restore the background
+    }
+
+   async function OpenMarksModal2() {
+        let response = await fetch('/checkData');
+        response = await response.json();
+
+        if (response.error !== "") {
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: response.error,
+            });
+        }
+        else if(response.message === 'EMPTY'){
+            $('#marks2').modal('show');
+        }
+        else {
+            let record = response.results[0];
+
+            // Populate form fields with the record data
+            document.getElementById('board2').value = record.board;
+            document.getElementById('rollNumber2').value = record.roll_number;
+            document.getElementById('maxMarks12').value = record.max_marks1;
+            document.getElementById('obtainedMarks12').value = record.ob_marks1;
+            document.getElementById('maxMarks22').value = record.max_marks2;
+            document.getElementById('obtainedMarks22').value = record.ob_marks2;
+            document.getElementById('maxMarks32').value = record.max_marks3;
+            document.getElementById('obtainedMarks32').value = record.ob_marks3;
+            document.getElementById('subject42').value = record.sub4;
+            document.getElementById('maxMarks42').value = record.max_marks4;
+            document.getElementById('obtainedMarks42').value = record.ob_marks4;
+            document.getElementById('subject52').value = record.sub5;
+            document.getElementById('maxMarks52').value = record.max_marks5;
+            document.getElementById('obtainedMarks52').value = record.ob_marks5;
+
+            // Disable all fields after populating
+            document.getElementById('board2').disabled = true;
+            document.getElementById('rollNumber2').disabled = true;
+            document.getElementById('maxMarks12').disabled = true;
+            document.getElementById('obtainedMarks12').disabled = true;
+            document.getElementById('maxMarks22').disabled = true;
+            document.getElementById('obtainedMarks22').disabled = true;
+            document.getElementById('maxMarks32').disabled = true;
+            document.getElementById('obtainedMarks32').disabled = true;
+            document.getElementById('subject42').disabled = true;
+            document.getElementById('maxMarks42').disabled = true;
+            document.getElementById('obtainedMarks42').disabled = true;
+            document.getElementById('subject52').disabled = true;
+            document.getElementById('maxMarks52').disabled = true;
+            document.getElementById('obtainedMarks52').disabled = true;
+            document.getElementById('subject12').disabled = true;
+            document.getElementById('subject32').disabled = true;
+            document.getElementById('subject22.').disabled = true;
+            document.getElementById('btn2').disabled = true;
+        }
+
+        $('#marks2').modal('show');
+    }
+    function CloseMarksModal2() {
+        $('#marks2').modal('hide');
+    }
+
+    async function OpenMarksModal3() {
+        let response = await fetch('/checkData');
+        response = await response.json();
+
+        if (response.error !== "") {
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: response.error,
+            });
+        }
+        else if(response.message === 'EMPTY'){
+            $('#marks3').modal('show');
+        }else {
+            let record = response.results[0]
+            document.getElementById('uni').value = record.university_college
+            document.getElementById('rollNumber3').value = record.roll_number
+            document.getElementById('collegeMaxMarks').value = record.college_max_marks
+            document.getElementById('collegeObtMarks').value = record.college_obtained_marks
+            document.getElementById('btn3').disabled = true;
+            document.getElementById('uni').disabled = true;
+            document.getElementById('collegeObtMarks').disabled = true;
+            document.getElementById('collegeMaxMarks').disabled = true;
+            document.getElementById('rollNumber3').disabled = true;
+        }
+
+        $('#marks3').modal('show');
+    }
+    function CloseMarksModal3() {
+        $('#marks3').modal('hide');
+
+        // Remove the CSS class from the body element to restore the background
+    }
+
+    async function Add() {
+        let course_id = document.getElementById('course').value
+
+        let response = await fetch('/add-course', {
+            method: 'POST',
+            headers: ({'Content-Type': 'application/json'}),
+            body: JSON.stringify({course_id: course_id})
+        })
+        response = await response.json()
+        console.log(response)
+        if (response.error !== "") {
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: (response.error),
+            });
+        } else {
+
+            Swal.fire({
+                title: "Good job!",
+                text: (response.message),
+                icon: "success"
+            }).then(() => {
+                CloseModal()
+            })
+        }
+    }
+
+
+    async function Show() {
+        // get user from server
+        let url = "/read-courses"
+        let response = await fetch(url)
+        response = await response.json()
+        // console.log(response.error)
+        if (response.error !== "") {
+            // console.log(response.error)
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: (response.error),
+            });
+        } else {
+            product = response.records
+            // console.log(response.records)
+            let html = ``;
+            for (let i = 0; i < response.records.length; i++) {
+                let record = response.records[i];
+                //console.log(record)
+                html += `<tr >
+                         <td class="text-center">${i + 1}</td>
+                         <td class="text-center text-lg-center">${record.course_name}</td>
+                         </tr>`
+            }
+            document.getElementById('courseTable').innerHTML = html;
+        }
+
+    }
+
+    async function CheckPref(){
+        let response = await fetch('/check-pref')
+         response = await response.json()
+       // console.log(response)
+
+        if(response.error!==""){
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: (response.error),
+            })
+        }else if(response.records[0].degree === "Under Graduation"){
+            if(response.records[0].pcm ==="YES"){
+                OpenMarksModal1()
+            }else{
+                OpenMarksModal2()
+            }
+        }else{
+            OpenMarksModal3()
+        }
+
+    }
+
+    async function AddMarks1() {
+        // Fetch the latest values each time the function is called
+        let maxMarks1 = parseInt(document.getElementById('maxMarks1').value);
+        let obtainedMarks1 = parseInt(document.getElementById('obtainedMarks1').value);
+        let maxMarks2 = parseInt(document.getElementById('maxMarks2').value);
+        let obtainedMarks2 = parseInt(document.getElementById('obtainedMarks2').value);
+        let maxMarks3 = parseInt(document.getElementById('maxMarks3').value);
+        let obtainedMarks3 = parseInt(document.getElementById('obtainedMarks3').value);
+        let maxMarks4 = parseInt(document.getElementById('maxMarks4').value);
+        let obtainedMarks4 = parseInt(document.getElementById('obtainedMarks4').value);
+        let maxMarks5 = parseInt(document.getElementById('maxMarks5').value);
+        let obtainedMarks5 = parseInt(document.getElementById('obtainedMarks5').value);
+
+       // console.log(maxMarks1)
+
+        // Clear previous errors
+        document.getElementById('error1').innerText = "";
+        document.getElementById('error2').innerText = "";
+        document.getElementById('error3').innerText = "";
+        document.getElementById('error4').innerText = "";
+        document.getElementById('error5').innerText = "";
+
+        let hasError = false;
+
+        // Validate each set of marks
+        if (obtainedMarks1 > maxMarks1) {
+            document.getElementById('error1').innerText = "Obtained marks exceeds maximum marks.";
+            hasError = true;
+        }
+        if (obtainedMarks2 > maxMarks2) {
+            document.getElementById('error2').innerText = "Obtained marks exceeds maximum marks.";
+            hasError = true;
+        }
+        if (obtainedMarks3 > maxMarks3) {
+            document.getElementById('error3').innerText = "Obtained marks exceeds maximum marks.";
+            hasError = true;
+        }
+        if (obtainedMarks4 > maxMarks4) {
+            document.getElementById('error4').innerText = "Obtained marks exceeds maximum marks.";
+            hasError = true;
+        }
+        if (obtainedMarks5 > maxMarks5) {
+            document.getElementById('error5').innerText = "Obtained marks exceeds maximum marks.";
+            hasError = true;
+        }
+
+        // If there are no errors, proceed with form submission
+        if (!hasError) {
+            //console.log("Add");
+            let form = document.getElementById('formMarks1');
+            let formData = new FormData(form);
+            formData.append('subject1', document.getElementById('subject1').value);
+            formData.append('subject2', document.getElementById('subject2').value);
+            formData.append('subject3', document.getElementById('subject3').value);
+
+            //Perform the form submission if necessary
+            if ($("#formMarks1").valid()) {
+                let response = await fetch('/add-marks1', {
+                    method: 'POST',
+                    body: formData
+                });
+                response = await response.json();
+                //console.log(response)
+                if (response.error !== "") {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: (response.error),
+                    });
+                } else {
+                    Swal.fire({
+                        title: "Good job!",
+                        text: (response.message),
+                        icon: "success"
+                    }).then(() => {
+                        CloseMarksModal1();
+                    });
+                }
+            }
+        }
+    }
+
+    async function AddMarks2() {
+        let maxMarks1 = parseInt(document.getElementById('maxMarks12').value);
+        let obtainedMarks1 = parseInt(document.getElementById('obtainedMarks12').value);
+        let maxMarks2 = parseInt(document.getElementById('maxMarks22').value);
+        let obtainedMarks2 = parseInt(document.getElementById('obtainedMarks22').value);
+        let maxMarks3 = parseInt(document.getElementById('maxMarks32').value);
+        let obtainedMarks3 = parseInt(document.getElementById('obtainedMarks32').value);
+        let maxMarks4 = parseInt(document.getElementById('maxMarks42').value);
+        let obtainedMarks4 = parseInt(document.getElementById('obtainedMarks42').value);
+        let maxMarks5 = parseInt(document.getElementById('maxMarks52').value);
+        let obtainedMarks5 = parseInt(document.getElementById('obtainedMarks52').value);
+
+       // console.log(maxMarks1)
+
+        // Clear previous errors
+        document.getElementById('error6').innerText = "";
+        document.getElementById('error7').innerText = "";
+        document.getElementById('error8').innerText = "";
+        document.getElementById('error9').innerText = "";
+        document.getElementById('error10').innerText = "";
+
+        let hasError = false;
+
+        // Validate each set of marks
+        if (obtainedMarks1 > maxMarks1) {
+            document.getElementById('error6').innerText = "Obtained marks exceeds maximum marks.";
+            hasError = true;
+        }
+        if (obtainedMarks2 > maxMarks2) {
+            document.getElementById('error7').innerText = "Obtained marks exceeds maximum marks.";
+            hasError = true;
+        }
+        if (obtainedMarks3 > maxMarks3) {
+            document.getElementById('error8').innerText = "Obtained marks exceeds maximum marks.";
+            hasError = true;
+        }
+        if (obtainedMarks4 > maxMarks4) {
+            document.getElementById('error9').innerText = "Obtained marks exceeds maximum marks.";
+            hasError = true;
+        }
+        if (obtainedMarks5 > maxMarks5) {
+            document.getElementById('error10').innerText = "Obtained marks exceeds maximum marks.";
+            hasError = true;
+        }
+
+        if(!hasError){
+            let form = document.getElementById('formMarks2')
+            let formData = new FormData(form)
+
+            if($("#formMarks2").valid()) {
+                let response = await fetch('/add-marks2', {
+                    method: 'POST',
+                    body: formData
+                })
+                response = await response.json()
+                //console.log(response)
+                if (response.error !== "") {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: (response.error),
+                    });
+                } else {
+
+                    Swal.fire({
+                        title: "Good job!",
+                        text: (response.message),
+                        icon: "success"
+                    }).then(() => {
+                        CloseMarksModal2()
+                    })
+                }
+            }
+        }
+
+    }
+
+    async function AddMarks3() {
+
+        let maxMarks = parseInt(document.getElementById('collegeMaxMarks').value)
+        let obtainedMarks = parseInt(document.getElementById('collegeObtMarks').value)
+
+        document.getElementById('error11').innerText = "";
+        let hasError = false;
+        if(obtainedMarks>maxMarks){
+            document.getElementById('error11').innerText = "Obtained marks exceed max marks."
+            hasError=true;
+        }
+        else{
+            let form = document.getElementById('formMarks3')
+            let formData = new FormData(form)
+
+            if($("#formMarks3").valid()) {
+                let response = await fetch('/add-marks3', {
+                    method: 'POST',
+                    body: formData
+                })
+                response = await response.json()
+                //console.log(response)
+                if (response.error !== "") {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: (response.error),
+                    });
+                } else {
+
+                    Swal.fire({
+                        title: "Good job!",
+                        text: (response.message),
+                        icon: "success"
+                    }).then(() => {
+                        CloseMarksModal3()
+                    })
+                }
+            }
+        }
+    }
+
+
+
+
+</script>
+
+<script>
+
+    async function LockDash(){
+        let response = await fetch('/lock-dash')
+        response = await response.json()
+        console.log(response)
+        if (response.error !== "") {
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: (response.error),
+            });
+        } else {
+
+            Swal.fire({
+                title: "Good job!",
+                text: (response.message),
+                icon: "success"
+            }).then(() => {
+                document.getElementById('pref-button').disabled = true;
+                document.getElementById('marks-button').disabled = true;
+                lockButton.style.display='none';
+                downloadButton.style.display='block';
+            })
+        }
+    }
+</script>
+
+</body>
+</html>

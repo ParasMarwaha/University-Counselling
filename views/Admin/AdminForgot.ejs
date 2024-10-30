@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <title>Document</title>
+    <%- include('../Links/HeaderFiles.ejs') %>
+
+    <style>
+        .error{
+            color: whitesmoke;
+        }
+    </style>
+</head>
+<body>
+
+<div id="preloader"></div>
+
+<div id="wrapper">
+
+    <div class="inner-page-banner-area" style="background-image: url('/img/about/1.jpg');">
+        <div class="container">
+            <div class="pagination-area">
+
+                <h1>E-mail</h1>
+            </div>
+        </div>
+    </div>
+
+    <div class="service2-area">
+        <div class="search-area">
+            <div class="container">
+                <div class="row search-inner">
+                    <div class="col-xl-2 col-lg-3 col-md-3 col-sm-12">
+                        <div class="search-title">
+                            <span>Enter Email</span>
+                        </div>
+                    </div>
+                    <div class="col-xl-8 col-lg-6 col-md-6 col-sm-12">
+                        <div class="search-input">
+                            <form id="form">
+                                <input type="text" required name="email" id="email" class="search-form" placeholder="Enter Email . . .">
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-xl-2 col-lg-3 col-md-3 col-sm-12">
+                        <div class="search-submit">
+                            <button class="btn btn-primary" onclick="onSend()">Send OTP</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%- include('../Links/Footer.ejs') %>
+
+</div>
+<%- include('../Links/Scripts.ejs') %>
+
+<script>
+    async function onSend() {
+
+        let email = document.getElementById('email').value;
+        console.log(email)
+
+        if($("#form").valid()) {
+            let url = "/admin-forgot-pass";
+            let response = await fetch(url, {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({email:email})
+            });
+            response = await response.json();
+            console.log(response);
+
+            if (response.error != "") {
+                alert("Oh No")
+            } else {
+                //console.log("success")
+                Swal.fire({
+                    title: "Good job!",
+                    text: "You clicked the button!",
+                    icon: "success"
+                })
+                    .then(() => {
+                        window.location.href = "/admin-otp/" + email
+                    })
+            }
+        }
+
+    }
+</script>
+</body>
+</html>
